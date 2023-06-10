@@ -1,0 +1,71 @@
+
+
+¿Eres un desarrollador junior? Si respondiste que sí: ¿Cómo lo sabes? ¿Es porque tu título es "Desarrollador Junior"? ¿Es porque tus compañeros de trabajo se llevan todo el trabajo más interesante y tú te quedas con las tareas más aburridas y repetitivas y los errores simples? ¿O simplemente sientes que aún no has "cumplido tu tiempo" para abandonar el término "junior"?
+
+Sea cual sea el caso, quiero decirte que dejes de ser un junior. Deja de hacerlo ahora mismo. He hablado con muchas personas que comienzan su conversación conmigo diciendo "apenas estoy empezando" o "solo soy junior", a lo que respondo: "¡Eso es genial! Bienvenido al mundo del desarrollo de software", solo para descubrir que han estado trabajando como desarrolladores de software durante más de un año y medio. Esto me sorprende. Y sucede tanto que decidí escribir esta publicación de blog sobre cómo salir de esta situación eterna de ser junior y comenzar a avanzar de manera significativa en tu carrera profesional.
+
+La tecnología avanza rápidamente.
+En primer lugar, creo que es importante establecer esto primero:
+
+No hay absolutamente ningún límite de tiempo en cuanto a cuánto tiempo debes ser un desarrollador antes de dejar de ser junior.
+
+Cualquier número que hayas escuchado al respecto está equivocado.
+
+Una de las cosas que me encantan de esta industria es la velocidad con la que avanza: rápido. Con tecnologías emergentes todo el tiempo y mejoras en la tecnología existente, realmente no se necesita mucho tiempo para que un desarrollador que se mantenga al tanto de estos avances en su área de interés alcance un nivel de familiaridad que rivaliza con aquellos con décadas de experiencia.
+
+Lo veo de esta manera. Imagina que hay un río con una corriente constante. Montar en un tubo por el río es como desarrollar experiencia en el desarrollo de software. En lugar de que todos comiencen al principio del río, comienzan donde todos los demás están. No se tarda mucho una vez que te lanzas al agua en alcanzar a todos los demás en el río, independientemente de cuánto tiempo lleven haciéndolo. Sí, te faltará experiencia río arriba, pero eso no cambia la experiencia que estás teniendo ahora mismo. Sé que es una analogía imperfecta, pero creo que es instructiva.
+
+Por supuesto, hay mucho que decir sobre las personas con décadas de experiencia, y aunque la mayoría de ello es positivo, ¡no todo lo es! Las personas con años de experiencia tienen más probabilidades de poder aprender cosas nuevas más rápidamente porque a menudo las cosas nuevas se asemejan a las antiguas (aunque no siempre es así. "Desaprender" también es definitivamente algo real). Los desarrolladores con experiencia también tienen más probabilidades de poder identificar problemas en el código mucho antes de que se conviertan en problemas, porque han visto cómo las cosas se desarrollan en el mundo real y comprenden mejor las limitaciones y restricciones.
+
+Dicho esto, los ingenieros experimentados también son más propensos a ser reacios a probar nuevas herramientas y tecnologías, y en su lugar, aferrarse a lo que conocen. Esto puede hacer que se pierdan avances realmente fantásticos en el ecosistema y las herramientas. Los desarrolladores experimentados también pueden pasar por alto características importantes en lenguajes y herramientas porque están acostumbrados a hacer las cosas de una cierta manera.
+
+De todas formas, mi punto es que debido al ritmo tan rápido al que se mueve la industria de desarrollo de software:
+
+Mantenerse al tanto de algunas tecnologías seleccionadas permite a cualquiera convertirse en un experto en ellas bastante rápido.
+
+Y si esa persona puede temperar su entusiasmo con una comprensión realista del impacto de su falta de experiencia, pueden generar un impacto enormemente poderoso para la empresa (si se les permite).
+
+Mi propia experiencia
+
+Asistí a la universidad y realicé prácticas mientras estaba en la escuela. Esto me brindó una exposición increíble al campo antes de buscar oficialmente un trabajo a tiempo completo. Así que cuando me gradué, ya llevaba un año y medio trabajando como desarrollador de software a tiempo parcial.
+
+Cuando me gradué de la BYU y me uní como ingeniero a tiempo completo, tuve problemas para deshacerme del calificativo de "junior". Aunque toda mi experiencia hasta ese momento había sido trabajo a tiempo parcial mientras aún estaba en la escuela, sentía que conocía el área del código de mi equipo tanto como cualquier otro y no me parecía correcto que todavía me asignaran tareas de menor prioridad.
+
+Vi que se asignaban tareas de gran envergadura a los ingenieros más experimentados y yo quería formar parte de eso. Sin embargo, dado que pasé de ser estudiante a empleado a tiempo completo y todos me conocían como el estudiante, siempre sentí que las personas me veían como "el becario".
+
+Quizás podría haber sido un poco más asertivo acerca de mis metas y expectativas, pero decidí que la única forma de obtener más responsabilidades era ir a una nueva empresa donde la gente nunca me hubiera visto como "el becario" y, en cambio, me considerara un compañero regular.
+
+Así es lo que hice. Solo cuatro meses después de convertirme en empleado a tiempo completo, fui reclutado por mi próxima empresa, donde obtuve un aumento salarial masivo (más del 50%) y el 20% de mi tiempo se dedicaba a la arquitectura. Fue fenomenal. Nadie volvió a verme como un junior. De hecho, solo cuatro meses después de graduarme de la universidad, ocupaba un puesto justo por debajo del arquitecto en una organización de millones de dólares.
+
+Y eso resultó extremadamente bien para ellos. Cuando me uní a la empresa, querían realizar una migración importante de sus herramientas de frontend. Fui fundamental en el diseño del camino de migración y fue un rotundo éxito.
+
+Lee toda mi historia en la "Revisión de la Década de 2010".
+
+Cómo dejar de ser un junior
+En lugar de pensar en cómo dejar de ser una cosa, piensa en cómo empezar a ser algo diferente.
+
+¿Qué hacen los desarrolladores senior en tu empresa? Haz eso en lugar de hacer las cosas que hacen los desarrolladores junior. Eso es todo.
+
+Naturalmente, es probable que la empresa confíe más en los desarrolladores senior que en ti, y no deseas extralimitarte, pero ofrécete como voluntario para participar en las tareas más complicadas. Incluso si solo dices: "oye, ¿puedo participar en esa reunión?" Toma notas para ti mismo de todo lo que no conoces y pregunta sobre esos temas más tarde. En futuras reuniones podrás contribuir cada vez más con los conocimientos que empieces a acumular. Estudia un poco después de la reunión y haz sugerencias.
+
+Ten cuidado de ser demasiado dominante. Aunque puedas acumular mucho conocimiento moderno rápidamente, asegúrate de reconocer que tu experiencia limita la utilidad de ese conocimiento. Por lo tanto, sé respetuoso con tus compañeros de trabajo. Sin embargo, busca a las personas dispuestas a sentarse contigo y responder tus preguntas para ayudarte a cubrir las lagunas en tu experiencia mientras acumulas conocimiento rápidamente.
+
+Aprovecha esa tecnología de ritmo rápido a tu favor y aprende sobre las novedades y mejoras que los desarrolladores de tu empresa pueden aprovechar hoy en día. Luego enseña esos conceptos en reuniones de almuerzo "brown bag" (reuniones en las que todos llevan su almuerzo y alguien presenta algo, a menudo realizadas semanalmente). Si tu empresa no tiene programadas reuniones de almuerzo "brown bag", organízalas y presenta en ellas.
+
+Ofrece tu voluntariado para hablar en encuentros locales. Una charla en un encuentro fue responsable tanto de mi cambio de trabajo del que hablé anteriormente, como de que me invitaran a unirme a Egghead.io como instructor. Propón dar charlas en conferencias.
+
+Habla sobre lo que has logrado para demostrar que realmente estás contribuyendo a un nivel más allá de lo que se espera de un junior. Haz que piensen: "¿Eh, este desarrollador es solo un junior y ¿logró eso? Quizás en realidad no sea un junior después de todo".
+
+Asegúrate de que tu gerente comprenda tus objetivos e intenciones como desarrollador. Si esperas pedir un ascenso en la reunión en la que tu gerente te informa si obtendrás un aumento de sueldo, estás pidiendo demasiado tarde. Deberían conocer tus objetivos mucho antes y puedes preguntarles qué esperan que puedas hacer para llegar a ese nivel.
+
+Prueba hasta que encaje
+No me gusta la frase "finge hasta que lo logres", pero el sentimiento es similar. La idea es que te desenvuelvas en el nivel en el que quieres estar de la mejor manera posible, y eventualmente comenzará a sentirse como si realmente estuvieras en ese nivel.
+
+Sentí que tenía que dejar la empresa en la que estaba para alcanzar el nivel al que quería llegar. Probablemente lo hubiera logrado con la empresa en la que ya estaba si hubiera sido más paciente. Probablemente lo habría hecho si no me hubieran reclutado activamente para otra oportunidad. Dicho esto, a veces, si no puedes deshacerte del título de "junior", puede que consideres buscar otra oportunidad.
+
+Conclusión
+Espero que con este artículo no disminuya la cantidad de trabajo que se necesita para adquirir experiencia y tener un impacto en esta industria. Es mucho trabajo. Sin embargo, mi objetivo principal es ayudar a inspirar a algunas personas a fijarse metas más altas. Eres capaz de más de lo que piensas. Te lo prometo.
+
+Ya no tienes que ser un principiante. Es hora de mejorar.
+
+¡Buena suerte!
