@@ -1,0 +1,62 @@
+Por qué React no está muriendo
+29.01.2023 
+
+[img]
+Photo by Silvestri Matteo
+
+
+El pasado jueves participé en un panel de discusión sobre el estado del ecosistema de React, donde principalmente hablamos sobre una pregunta: "¿Está React muriendo?". No pude terminar mi idea debido a un corte en StreamYard, así que pensé en darle seguimiento con un artículo en el blog. Entonces, ¿por qué se estaría muriendo React?
+
+La burbuja de Twitter
+Existe cierta controversia, principalmente en Twitter, acerca de que React está muriendo y de que otras bibliotecas son mejores que React, además de que estás haciendo algo mal o te estás perdiendo algo si eliges React en este momento.
+
+La verdad es que mi círculo está compuesto por personas muy inteligentes, autores de bibliotecas, responsables de mantenimiento e influyentes tecnológicos que adoran estar a la vanguardia, donde constantemente hay que estar atentos a la próxima gran novedad. En ese mundo, se ve todo desde una perspectiva diferente, más enfocada en el futuro que en el estado actual. Es natural ver una gran cantidad de impulso e innovación en ese ámbito. Las cosas se declaran muertas mucho antes de que realmente lo estén, y creo que esta vez no es diferente.
+
+Para entender por qué React está aquí para quedarse, tenemos que retroceder un poco:
+
+Una mirada hacia atrás
+React ha estado presente durante casi 10 años y ha sido pionero en muchas cosas que ahora damos por sentado. Esto incluye las dos principales razones por las que creo que React "ganó" en primer lugar: el Desarrollo Basado en Componentes y JSX, dos aspectos que ahora son abrazados por la mayoría de las nuevas tecnologías.
+
+Además, React nos proporcionó una forma predecible de renderizar nuestra interfaz de usuario. Antes de eso, todo lo que usábamos era un desorden (en comparación con los estándares actuales). Teníamos la opción de actualizar el DOM manualmente en un lío imperativo (¡hola jQuery 👀) o lidiar con la vinculación de datos bidireccional y una sintaxis de plantilla extraña (👋 angular).
+
+Así que React nos permitió abstraer nuestra interfaz de usuario en componentes y acoplar la funcionalidad (JS) con la maquetación (HTML) de una manera declarativa y reutilizable. Esto fue revolucionario en ese momento. Cuando fue lanzado, muchas personas cambiaron rápidamente (yo incluido), porque React era mucho mejor que las alternativas disponibles.
+
+Nuevos horizontes
+Los recién llegados ahora intentan tomar las partes buenas de React y utilizarlas para inventar algo que no tenga sus desventajas. Las cosas que generalmente se mencionan son el rendimiento, la sobrecarga del Virtual DOM y la dificultad general para interactuar directamente con el DOM, por ejemplo, para animaciones o accesibilidad (refs 😭).
+
+Sin embargo, enfrentarse al líder indiscutible React será muy difícil por dos razones:
+
+Bucle de crecimiento
+Cada día, hay muchas personas que comienzan en el desarrollo web. Buscan cuál es la mejor tecnología para aprender en este momento y conseguir un trabajo. Algo que les permita pagar las facturas y no sea terrible de trabajar. Y todo apunta hacia React. Las empresas tienen muchas aplicaciones existentes en React y siguen eligiendo React para nuevos proyectos. Es una elección fácil y segura.
+
+Por otro lado, las empresas eligen React porque es ahí donde se encuentran todos los desarrolladores. Si quieres construir algo que pueda ser mantenido en los próximos años, es mejor que no elijas el próximo tren de moda que no va a ninguna parte (¿recuerdas CoffeeScript?). Quieres algo probado en batalla, que haya resistido el paso del tiempo, donde no tendrás problemas para encontrar desarrolladores para escalar cuando sea necesario. Y nadie ha sido despedido por elegir React.
+
+[img]
+[alt] Un círculo de retroalimentación con dos flechas: las empresas eligen React porque ahí es donde están los desarrolladores; los desarrolladores eligen React porque ahí es donde están los trabajos.
+
+Ecosistema
+Puede llevar años construir un buen ecosistema y comunidad. Las bibliotecas y los frameworks que salen en este momento no tendrán todo resuelto de inmediato. Necesita adoptantes tempranos para descubrir cosas, encontrar y enseñar patrones e inventar soluciones comunitarias a problemas. Para aumentar la adopción, un ecosistema vibrante es absolutamente necesario.
+
+React está años por delante en este aspecto. Incluso en artículos críticos se afirma que no pueden abandonar React porque tiene "la mejor comunidad y los mejores módulos de terceros".
+
+TanStack
+Aquí es donde entra en juego el TanStack. Realmente espero que el hecho de que el TanStack tenga todos los paquetes construidos de una manera independiente al framework ayude a la adopción de bibliotecas no basadas en React con el tiempo. Piénsalo: si necesitas obtener datos, renderizar una tabla y tal vez virtualizarla, puedes hacer todo eso con el TanStack. Y si sabes cómo hacerlo en React, también sabes cómo hacerlo en Solid, Svelte o Vue.
+
+Conocer los conceptos es un conocimiento transferible. Y elimina muchas cosas que tendrías que volver a aprender al pasar a una tecnología diferente y más nueva, al tiempo que conserva la misma gran experiencia de desarrollo.
+
+
+Es cierto que ya existen soluciones en el mercado que son "mejores que React" en algunos aspectos. Son más modernas, más eficientes, utilizan paradigmas diferentes, son "verdaderamente reactivas", entre otros.
+
+Sin embargo, para romper el ciclo de crecimiento, para lograr que muchos desarrolladores cambien, para construir una comunidad y un ecosistema amplios, creo que se necesitará algo que sea mucho mejor que React para reemplazarlo. Al igual que React fue mucho mejor que las alternativas cuando fue lanzado.
+
+Y aún no hemos llegado allí. React sigue siendo "suficientemente bueno" para la mayoría de las cosas que se construyen en la actualidad, y no veo que eso cambie en un futuro cercano. Eso no significa que no valga la pena buscar nuevas tecnologías. Necesitamos innovación. Puede suceder en React, o puede suceder fuera de él. Solo el tiempo lo dirá.
+
+En realidad, ambas cosas podrían suceder. No es algo dado que una sola tecnología gobierne todas las demás. Un monopolio tampoco es algo por lo que se deba luchar. La competencia beneficia a todos, especialmente a los usuarios. Ya podemos ver cómo el surgimiento de la reactividad detallada está influyendo en bibliotecas existentes como Preact.
+
+[tweet]
+
+Sin duda, son tiempos emocionantes, pero no sientas que tienes que mantenerte siempre en la vanguardia, que debes aprender todo en el momento en que sale, o que React no es lo suficientemente bueno.
+
+Porque no está muriendo.
+
+Eso es todo por hoy. No dudes en contactarme en Twitter si tienes alguna pregunta, o simplemente deja un comentario a continuación.
