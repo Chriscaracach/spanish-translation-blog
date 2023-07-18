@@ -1,0 +1,102 @@
+Últimamente me han preguntado mucho cómo funciona React Query internamente. ¿Cómo sabe cuándo volver a renderizar? ¿Cómo elimina duplicados? ¿Cómo es que es independiente del framework?
+
+Estas son todas muy buenas preguntas, así que echemos un vistazo detrás de escena de nuestra querida biblioteca de gestión de estado asíncrono y analicemos qué sucede realmente cuando llamas a `useQuery`.
+
+Para comprender la arquitectura, debemos comenzar desde el principio:
+
+El QueryClient
+
+[img]
+[alt]El QueryClient con sus opciones predeterminadas contiene la QueryCache.
+
+Todo comienza con un QueryClient. Esa es la clase de la cual creas una instancia, probablemente al comienzo de tu aplicación, y luego la haces accesible en todas partes a través del QueryClientProvider:
+
+---Code Snippet---
+query-client-provider
+Copyquery-client-provider: copy code to clipboard
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+// ⬇️ this creates the client
+const queryClient = new QueryClient()
+
+function App() {
+  return (
+    // ⬇️ this distributes the client
+    <QueryClientProvider client={queryClient}>
+      <RestOfYourApp />
+    </QueryClientProvider>
+  )
+}
+---Code Snippet---
+
+El QueryClientProvider utiliza el contexto de React para distribuir el QueryClient en toda la aplicación. El cliente en sí es un valor estable: se crea una vez (asegúrate de no recrearlo inadvertidamente con demasiada frecuencia), por lo que este es un caso perfecto para utilizar Contexto. No hará que tu aplicación se vuelva a renderizar, simplemente te brinda acceso a este cliente a través de useQueryClient.
+
+Una entidad que contiene la caché
+Puede que no sea muy conocido, pero el QueryClient en sí no hace mucho. Es un contenedor para la QueryCache y la MutationCache, las cuales se crean automáticamente cuando creas un nuevo QueryClient.
+
+También contiene algunos valores predeterminados que puedes establecer para todas tus consultas y mutaciones, y proporciona métodos convenientes para trabajar con las cachés. En la mayoría de las situaciones, no interactuarás directamente con la caché, sino que accederás a ella a través del QueryClient.
+
+Consulta en caché
+Muy bien, entonces el cliente nos permite trabajar con la caché, ¿qué es la caché?
+
+[img]
+[alt]QueryCache consiste en consultas y se sincroniza con Persisters.
+
+En pocas palabras, QueryCache es un objeto en memoria donde las claves son una versión serializada de manera estable de tus queryKeys (llamado queryKeyHash) y los valores son una instancia de la clase Query.
+
+Es importante entender que React Query, por defecto, solo almacena datos en memoria y en ningún otro lugar. Si recargas la página del navegador, la caché desaparecerá. Si deseas escribir la caché en un almacenamiento externo como localstorage, debes consultar los persisters.
+
+Consulta
+
+[img]
+[alt]La consulta informa al Observador
+
+La caché tiene consultas, y una consulta (Query) es donde ocurre la mayor parte de la lógica. No solo contiene toda la información sobre una consulta (sus datos, campo de estado o información meta como cuándo ocurrió la última recuperación), sino que también ejecuta la función de la consulta y contiene la lógica de reintentos, cancelación y deduplicación.
+
+Tiene una máquina de estados interna para asegurarse de que no nos encontremos en estados imposibles. Por ejemplo, si se debe activar una función de consulta mientras ya estamos recuperando datos, esa recuperación puede ser deduplicada. Si se cancela una consulta, vuelve a su estado anterior.
+
+Lo más importante es que la consulta sabe quién está interesado en los datos de la consulta, y puede informar a esos observadores sobre todos los cambios.
+
+Observador de la consulta
+
+[img]
+[alt]El observador es creado por useQuery e informa al componente sobre las actualizaciones
+
+Los Observadores son el enlace entre la Consulta (Query) y los componentes que desean utilizarla. Se crea un Observador cuando llamas a useQuery, y siempre está suscrito a una sola consulta. Por eso debes pasar un queryKey a useQuery. 😉
+
+Sin embargo, el Observador hace un poco más: es donde ocurre la mayoría de las optimizaciones. El Observador sabe qué propiedades de la Consulta está utilizando un componente, por lo que no tiene que notificarle cambios no relacionados. Por ejemplo, si solo utilizas el campo de datos (data), el componente no tiene que volver a renderizarse si isFetching está cambiando durante una nueva recuperación en segundo plano.
+
+Además, cada Observador puede tener una opción de selección (select), donde puedes decidir qué partes del campo de datos (data) te interesan. Ya he hablado antes sobre esta optimización en el artículo n.º 2: Transformaciones de datos en React Query. La mayoría de los temporizadores, como los de staleTime o intervalos de recuperación, también ocurren a nivel de observador.
+
+Consultas activas e inactivas
+Una consulta (Query) sin un Observador se denomina consulta inactiva. Todavía está en la caché, pero no está siendo utilizada por ningún componente. Si echas un vistazo a las React Query Devtools, verás que las consultas inactivas están atenuadas. El número en el lado izquierdo indica la cantidad de Observadores que están suscritos a la consulta.
+
+[img]
+[alt]Devtols donde una consulta tiene dos observadores y otra no tiene ninguno
+
+La imagen completa
+
+[img]
+[alt]Vista completa de la arquitectura
+
+Poniéndolo todo junto, podemos ver que la mayor parte de la lógica se encuentra dentro del núcleo de la Consulta (Query Core), independiente del framework: QueryClient, QueryCache, Query y QueryObserver están todos allí.
+
+Por eso es bastante sencillo crear un adaptador para un nuevo framework. Básicamente, necesitas una forma de crear un Observador, suscribirte a él y volver a renderizar tu componente si se notifica al Observador. Los adaptadores useQuery para React y Solid tienen alrededor de solo 100 líneas de código.
+
+Desde la perspectiva de un componente
+Por último, veamos el flujo desde otro ángulo, comenzando con un componente:
+
+[img]
+[alt]Flujo desde el montaje del componente, pasando por la obtención de datos, hasta su renderizado.
+
+- El componente se monta, llama a useQuery, que crea un Observador.
+- Ese Observador se suscribe a la Consulta, que se encuentra en la QueryCache.
+- Esa suscripción puede desencadenar la creación de la Consulta (si aún no existe), o puede desencadenar una actualización en segundo plano si los datos se consideran obsoletos.
+- Iniciar una búsqueda cambia el estado de la Consulta, por lo que el Observador será informado al respecto.
+- El Observador luego realiza algunas optimizaciones y potencialmente notifica al componente sobre la actualización, que luego puede renderizar el nuevo estado.
+- Después de que la Consulta haya terminado de ejecutarse, también informará al Observador sobre eso.
+Ten en cuenta que este es solo uno de los muchos flujos potenciales. Idealmente, los datos ya estarían en la caché cuando se monta el componente; puedes obtener más información al respecto en el apartado #17: Agregar datos iniciales a la caché de consultas.
+
+Lo que es común en todos los flujos es que la mayor parte de la lógica ocurre fuera de React (o Solid o Vue), y que cada actualización de la máquina de estados se propaga al Observador, quien luego decide si el componente también debe ser informado.
+
+Espero que ahora sea un poco más claro cómo funciona internamente React Query. Como siempre, no dudes en contactarme en Twitter si tienes alguna pregunta, o simplemente deja un comentario abajo.
