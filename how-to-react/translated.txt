@@ -1,0 +1,101 @@
+How to React
+3 de Noviembre de 2021 - Tiempo de lectura 8 minutos
+
+La mejor manera de aprender React es... honestamente, es diferente para todos. Pero aquí hay algunos consejos útiles de alguien que le ha enseñado React a decenas (¿cientos?) de miles de desarrolladores/as.
+
+Abstracción
+Empecemos hablando acerca de la Abstracción. Aquí hay un ejemplo de abstracción de youmightnotneedjquery.com:
+
+---Code---
+// $(el).toggleClass(className);
+
+function toggleClass(el, className) {
+  if (el.classList) {
+    el.classList.toggle(className)
+  } else {
+    var classes = el.className.split(' ')
+    var existingIndex = -1
+    for (var i = classes.length; i--; ) {
+      if (classes[i] === className) existingIndex = i
+    }
+
+    if (existingIndex >= 0) {
+      classes.splice(existingIndex, 1)
+    } else {
+      classes.push(className)
+    }
+
+    el.className = classes.join(' ')
+  }
+}
+----------
+
+Muy útil. Pero aquí está el truco ... Si tu no necesitas darle soporte a IE8, entonces puedes cambiar ésto:
+
+---Code---
+// $(el).toggleClass(className)
+
+function toggleClass(el, className) {
+  el.classList.toggle(className)
+}
+----------
+
+Lo que, honestamente, es una abstracción que no debería existir en absoluto... el.classList.toggle(className) es suficiente en sí mismo.
+
+Así que, ésto es lo que necesitás saber sobre una abstracción antes de usarlo en el flujo de trabajo de tu aplicación:
+
+¿Cuál es el beneficio de ésta abstracción?
+¿Cuál es el costo de ésta abstracción?
+Si no sabés éstas cosas, entonces corrés el riesgo de pagar el costo de solucionar un problema que no tenés. ¡Un costo sin beneficio no es negocio!
+
+Una parte importante de entender los costos y beneficios es "sentir" el dolor del problema que ésta abstracción resuelve. Por eso es importante aprender React y su ecosistema en el orden correcto para estar seguro de que no no estás sobrepasado por aprender demasiado al mismo tiempo y usar las abstracciones efectivamente.
+
+Para mas de ésto, chequéa "AHA Programming" (?)
+
+Una nota... ¿Solo querés jugar con cosas? ¿Solo querés enviar cosas? Eso es totalmente genial. Solamente reconocé que no conocés los alcances de React y eso puede jugarte en contra en el futuro. Si el futuro no te importa tanto, ¡entonces no te preocupes!
+
+Empezando con Javascript + JS Moderno
+Una de las cosas que amo de React es "cuán Javascript es". Si podés construir una simple aplicación con Javascript regular y las APIs del DOM, entonces vas a entender mucho mejor los beneficios de React. También vas a ser mucho más efectivo usando React, porque honestamente, el 90% de ser efectivo con React es entender buen JavaScript. Para ésto, te sugiero leer mi publicación "Javascript to know for React". También echa un vistazo a javascript30.com (gratuito) y beginnerjavascript.com (pago), ambos de Wes Bos.
+
+Además, conocer las características del JavaScript Moderno irá muy lejos. Debido a que JSX necesita un compilador, la mayoría de los desarrolladores/as React dan por sentadas las características/compiladores del Javascript moderno. Asi que la mayoría de los tutoriales van a asumir que tu tienes una comprensión básica de las características modernas de Javascript. Para eso, les sugiero mi Workshop "ES6 and Beyond" (free) que es una grabación de un taller que di en PayPal.
+
+Luego, vamos a aprender React
+Demasiado material "para principiantes" de React empieza con JSX y un montón de herramientas. React en sí mismo es sorprendentemente simple (y la documentación es muy buena, sobre todo la Beta). Lo que amo de React es su simplicidad. Tristemente, todo alrededor de él puede volverse complicado y puede ser difícil de saber donde están los límites entre React y las herramientas/librerías que se usan con él. Es por ésto que creé "The Beginner's Guide to React" totalmente gratis en Egghead.io. Empieza con todo en el archivo index.html, lo que creo que es importante. No necesitas ninguna herramienta para usar React. He construido proyectos reales con ésta aproximación para una rápida iteración y despliegue. Francamente, no puedo pensar en una forma más rápida de construir ese tipo de aplicaciones simples, y ésto te permite evitar una gran cantidad de innecesaria complejidad y llegar a construir y entregar aplicaciones rápidamente. Podés aprender más sobre ésta aproximación en mi publicación "Super Simple Start to React".
+
+La última lección de mi curso gratuito de egghead te muestra cómo usar CodeSandbox.io para crear tu aplicación completamente en el navegador y descargarla a tu computadora a una aplicación create-react-app.
+
+¡No necesitas nada instalado para llegar muy lejos! Y una vez que lo hagas, puedes avanzar mucho sin tener que configurar ninguna herramienta. Conozco varias empresas que desarrollan su aplicación con create-react-app.
+
+Además, tengo una gran cantidad de contenido relacionado con React en mi blog 😅
+
+Si buscas el camino rápido para aprender React, no busques más allá de EpicReact.Dev. Te enseñará todo lo que hace mi Guía para principiantes de React y MUCHO más. EpicReact puede ser tu compañero desde el inicio de tu viaje con React hasta convertirte en un jefe completo en esto. Y lo hace de manera tan efectiva gracias a su enfoque basado en ejercicios. Pasarás MUCHO más tiempo con tus dedos en el teclado aplicando lo que estás aprendiendo que lo que cualquier curso en línea típico te dará. No te pierdas EpicReact.Dev.
+
+Dependencias y npm
+Una vez que hayas decidido que no quieres escribir tu propia versión de cada componente que uses, puedes empezar a investigar las dependencias. Hay un MONTON de componentes por ahí y aquí es donde realmente debes comenzar a hacer preguntas como "cuál es el costo" y "cuál es el beneficio". Trata de no agregar una dependencia hasta después de "sentir el dolor" que se supone que resuelve. Te hará más efectivo usando esa dependencia.
+
+Te sugiero que leas la documentación de npm en una tarde. En serio, hazlo. Hay información realmente valiosa allí.
+
+Además, cuando comiences a usar dependencias, querrás aprender a importarlas. Tengo una charla llamada "More than you wanto to know about ES6 Modules" que probablemente encuentres llena de información útil sobre la sintaxis de los módulos ES.
+
+Remix
+Es hora de ser serios sobre la construcción de una aplicación en el mundo real. No importa lo que planees construir con React en la web, estarás bien servido si usas Remix como tu framework de elección. Me ha permitido construir éste sitio web con un excelente rendimiento y manteniendo un código fantástico que amo trabajar.
+
+Para aprender Remix, recomiendo la documentación oficial. También tengo algún contenido de Remix en mi blog que podría ser útil para ti.
+
+Gestión de estado
+La mayor parte de la gestión típica del estado será administrada por Remix, pero para el estado de la interfaz de usuario (estado que no se persiste en un backend), tendras que comprender cómo gestionar el estado dentro de React.
+
+Cuando aprendiste React, aprendiste sobre la API useState. Probablemente también aprendiste sobre Lifting State Up. En realidad, esto puede llevarte muy lejos con React y te animo a seguir haciéndolo mientras puedas. Eventualmente, es posible que comiences a tener algún problema con "el prop-drilling". Lo sabrás cuando lo sientas. Cuando esto suceda, te sugiero que leas mi publicación "Application State Management".
+
+React es una biblioteca de gestión del estado de la aplicación y no necesita Redux.
+
+Estilo de componentes
+Honestamente, no puedo dejar de recomendar Tailwind. Una vez que tu aplicación tenga más de unas pocas cientos de líneas de CSS, encontrará que Tailwind puede simplificar realmente las cosas conceptualmente para ti. Es "un framework de CSS con prioridad a las utilidades para construir rápidamente diseños personalizados".
+
+Eso dicho, Remix tiene un mecanismo fantástico para cargar (y descargar!!) CSS en una base por ruta, por lo que puede ser capaz de manejar solo escribir CSS regular por un tiempo antes de necesitar algo como Tailwind.
+
+Y además...
+Desde aquí te sugiero que te sumerjas más profundamente en React. Tengo mi curso de Patrones avanzados de componentes de React en egghead.io que puede darte mucha información realmente buena (pero puede obtener una versión más actualizada de este contenido en EpicReact.dev de todos modos, por lo que te sugiero que lo tomes).
+
+Conclusión
+Espero que esto te dé (y a sus amigos) un camino para cómo aprender React y dónde comenzar cuando se construyen aplicaciones de React. Agregar abstracciones a tu aplicación demasiado temprano las hace menos flexibles, por lo que generalmente seguiría este patrón al construir aplicaciones. ¡Buena suerte!

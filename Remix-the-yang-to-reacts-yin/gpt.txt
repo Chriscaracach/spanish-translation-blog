@@ -1,0 +1,82 @@
+He estado construyendo aplicaciones de React desde 2015. Desde entonces, React ha sido el mayor impulso de productividad individual para mi desarrollo sin duda alguna. El modelo declarativo de React para renderizar la interfaz de usuario basada en el estado simplificó drásticamente la forma en que pensaba acerca de la construcción de interfaces de usuario para la web. También me brindó una gran manera de pensar en el estado que estaba muy por delante de lo que estaba haciendo antes con Angular.js y Backbone.
+
+El eslogan de React es:
+
+Una biblioteca de JavaScript para construir interfaces de usuario.
+
+React hace un excelente trabajo al darte ese modelo de componente declarativo que pionero. No se puede construir una interfaz de usuario sin administrar algún estado (¿está abierta o cerrada la lista desplegable?). Es por eso que React tiene la administración del estado del componente.
+
+La clave está en que hay mucho más en las aplicaciones web que el estado local del componente. De hecho, la gran mayoría del "estado" cargado en la típica aplicación de React no es en realidad estado, sino una caché del estado que vino del servidor (que probablemente obtuvo de una capa de persistencia como una base de datos, por ejemplo). Si bien React siempre nos ha dado una buena manera de administrar el estado, no puede ocultar el hecho de que gran parte del estado que estamos administrando es en realidad una caché y sufre de los problemas de la caché.
+
+Como dice la famosa cita de Phil Karlton:
+
+Solo hay dos cosas difíciles en Ciencias de la Computación: invalidar caché y poner nombres a las cosas.
+
+En muchos sentidos, esto es una broma, pero la invalidación de caché definitivamente es un problema desafiante. Hasta ahora, React no nos ha dado nada de forma predeterminada para manejar este problema, como lo demuestran la gran cantidad de bibliotecas y herramientas que se han construido alrededor de React para hacer esto más fácil. Ya sea que estés usando Redux (toolkit), MobX, Apollo, React Query, SWR o algo más, solo estás usando esas herramientas porque hay un problema común y compartido en el desarrollo web para el que React no tiene una respuesta incorporada:
+
+Gestión del Abismo de la Red
+¿Qué es el abismo de la red?
+Esto es lo que quiero decir con el abismo de la red:
+
+[img]Excalidraw diagram showing a box labeled client and a box labeled server with the words "Network Chasm" between them
+
+Como desarrolladores web, escribimos código que se ejecuta en el cliente (el navegador) y en el servidor. No tenemos control sobre la red. Es por eso que tenemos que pensar en la caché en primer lugar. Cuando nuestro componente de React se vuelve a renderizar mientras el usuario hace su selección de taco 🌮, necesitamos tener acceso sincrónico a las opciones disponibles para ese taco en particular 🤤. Entonces hacemos solicitudes HTTP a través de la red y almacenamos esos valores en una caché en memoria a través del estado de React (o alguna biblioteca), para que estén disponibles para nuestro próximo renderizado.
+
+¿Sabes cuál es la causa número uno de errores en aplicaciones tanto grandes como pequeñas?
+
+El código.
+
+Ese abismo de la red es la fuente de una enorme cantidad de código. Hacerlo bien es extremadamente difícil, pero estamos construyendo aplicaciones web, así que tenemos que intentarlo. Entonces, usando el poder de JavaScript, la moderna API fetch y algunas bibliotecas prácticas, lanzamos un gancho de agarre sobre el abismo de la red a través de HTTP para obtener datos desde y hacia el backend:
+
+[img] Similar diagram as above with a box above "Client" that says "SPA" and an arrow from that over the network chasm pointing to a box that says "Node/Rails/PHP/Java/.Net". The row is labeled "Client-side apps"
+
+El código necesario para que este gancho de agarre funcione se encuentra en el frontend. Para la recuperación de datos, tienes que saber qué datos recuperar, y a menudo eso es un problema difícil porque nos gusta colocar nuestra recuperación de datos con el código que requiere los datos (reduce los errores/errores de datos demasiado al hacer las cosas de esta manera). Esto tiene el efecto desafortunado de no poder recuperar datos hasta que los componentes se han renderizado.
+
+Agregue el deseo de implementar la división de código para hacer que nuestra aplicación cargue más rápido y ahora no solo tiene que esperar a que se renderice el componente, sino que una vez que comienza a renderizar, también tiene que recuperar el código que realiza la recuperación. Esto conduce a cascadas de red (y todos conocemos el peligro de las cascadas).
+
+Desafortunadamente, la recuperación de datos por sí sola no puede resolver este problema. De hecho, incluso React Suspense para la recuperación de datos no podrá resolver este problema. Suspense tomará el lugar de muchas bibliotecas de recuperación de datos al poder obtener los datos desde dentro de los componentes (y si aún no se han almacenado en caché, activará la recuperación de datos que se busca), pero si quieres evitar el efecto de cascada, tienes que empezar a recuperar los datos antes de que se renderice el código para esos componentes.
+
+Recuperación más temprana
+
+Por eso estoy tan emocionado de que React Router vaya a resolver este problema al incorporar gran parte de lo que me encanta de Remix en React Router. Ryan lo explica en su publicación Remixing React Router. Con el poder de las rutas anidadas del diseño y los cargadores (obtención de datos) y las acciones (mutación de datos), puedes desacoplar la recuperación de datos de los componentes, pero aún así beneficiarte mucho de la co-ubicación. El código de recuperación puede que no esté dentro del componente en este caso, pero debido a la naturaleza de las rutas anidadas del diseño, está bastante cerca.
+
+Con estas características, pasamos de "tengo que renderizar para conocer los requisitos de datos" a "conozco los requisitos de datos desde la URL".
+
+Además de esto, React Router ahora gestiona parte de esa brecha de red por ti, lo que significa que tienes mucho menos código propio que preocuparte por los estados de carga/error. ¡También significa que React Router puede manejar la validación de caché por ti! Oh, y también resubidas de formulario y condiciones de carrera (algunos de los problemas más desafiantes en el desarrollo de UI). Y construir excelentes experiencias de usuario (como patrones de UI optimistas) nunca ha sido tan fácil. Esto reduce efectivamente la brecha de red para ti un poco:
+
+[img]Similar diagram as before except now the SPA box extends slightly further over the network chasm and the row is labeled "Remixed Router apps"
+
+¿Podemos hacerlo mejor?
+Tener esas características dentro de React Router será un gran beneficio para cualquiera que busque simplificar su código y acelerar su aplicación. React Router será un mejor amigo para cualquiera que use React Suspense para la obtención de datos (a menos que tenga la infraestructura/compilador/enrutador que tiene Meta, supongo).
+
+Pero podemos hacerlo aún mejor. Incluso una vez que comiences a obtener datos desde el navegador antes, tus usuarios aún tienen que esperar a que aparezcan y se ejecuten los paquetes de JavaScript iniciales antes de que puedan ver algo. Con React Router ayudándote a manejar la carga y mutación de datos, puedes eliminar mucho código de gestión de estado (caché), pero todo sigue estando allí en el navegador. Además, debido a que necesitamos el código para obtener datos antes de obtener el código que necesita los datos obtenidos, significa que ese código ya no se divide.
+
+¿No sería genial si pudiéramos simplemente mover todo ese código fuera del navegador y en el servidor? ¿No es molesto tener que escribir una función sin servidor cada vez que necesitas hablar con una base de datos o golpear una API que necesita tu clave privada? (sí lo es). Estas son las cosas que React Server Components prometen hacer por nosotros, y definitivamente podemos esperar eso para la carga de datos, pero no hacen nada para las mutaciones, y sería genial mover ese código fuera del navegador también (y no tener que esperar a que sea lanzado).
+
+Ingresa al escenario: Remix 💿
+
+Para llevar realmente tu aplicación al siguiente nivel, querrás renderizarla en el servidor. Y la mejor manera de hacerlo es usando Remix. Remix completa el puente a través del límite de red por ti de tal manera que ni siquiera tienes que pensarlo. Tomas todo tu código de obtención y mutación de datos y lo mueves para que se exporte como funciones convencionales de "módulos de ruta de Remix" y de repente todo ese código se queda en el servidor y Remix maneja todo el abismo de la red por ti:
+
+[img]Similar to the diagrams before with the addition of a "Backend for frontend" row that shows Remix spanning over the client and network boundary into the Server and an arrow pointing to "Rails/PHP/Java/.Net"
+
+Ahora tu aplicación puede realmente volar ⚡ porque el usuario ya no tiene que esperar a que se cargue JavaScript. La aplicación está ahí y lista para ellos (y gracias a la mejora progresiva, todos los enlaces y formularios funcionarán mientras se descarga JavaScript en segundo plano también).
+
+Y esto es genial, porque ahora puedes escribir código que se ejecuta en el servidor, ya no tienes que preocuparte por hacer llamadas directas a la base de datos o golpear APIs con claves privadas. Tus cargadores y acciones solo se ejecutan en el servidor, por lo que pueden hacer lo que necesites. ¡Bonita mejora de DX!
+
+Tu aplicación completa
+Remix te da el poder del servidor, lo que significa que puede manejar tu aplicación completa si es necesario. No todos quieren hacer las cosas de esta manera, pero debido a que tienes un backend que puede hablar directamente con bases de datos y servicios de terceros, puedes hacer que la estructura de tu aplicación se parezca más a esto:
+
+[img]Similar to the diagrams before with the addition of a "Full Stack" row that shows Remix spanning over the entire client, network chasm, and server
+
+Lo genial es que obtienes todos los beneficios de una brecha de red completamente gestionada al usar Remix, ya sea que vayas con 100% Remix o no, por lo que si estás contento con tu backend existente, ciertamente puedes seguir con eso.
+
+Conclusión
+El eslogan de React es:
+
+Una biblioteca de JavaScript para construir interfaces de usuario.
+
+Y hace un trabajo excelente en eso. React nunca ha prometido "gestión de la brecha de red", pero cada aplicación web la necesita. Con Remix manejando esa brecha de red, finalmente tenemos un yang para el yin de React. Con una gran biblioteca de representación y un excelente administrador de brechas de red, puede construir aplicaciones web mejores y más rápidas con menos errores, código más simple y más diversión.
+
+En una nota personal, esto es lo que me hizo enamorarme de la construcción de aplicaciones web con Remix. El sitio web en el que estás leyendo esto hoy es el resultado de una reescritura en Remix. No tenía idea de las cosas geniales que se convertirían. Remix lo hizo posible porque cuando terminé con las funciones básicas, me di cuenta de que tenía tiempo y capacidad para hacer mucho más (lea más sobre la reescritura de mi sitio aquí). Remix me hizo sentir que podía decir "sí" a las ideas divertidas que tenía y eso fue realmente refrescante.
+
+Espero que esto te ayude en tu búsqueda de construir mejores sitios web. Mantente fresco 😎

@@ -1,0 +1,95 @@
+Why useEffect is a bad place to make API calls
+The design choices react team have made in useEffect hook are still a heated debate. Some people like it and some don’t.
+
+If you don't come from the React world it’ll definitely sound strange because its default behaviour is the dreaded “Infinite Render Loop” which is pretty easy to run into. For example
+
+[code]useEffect(()=>{console.log("Hello World")})
+
+Looks fine right?
+Nope, this will print “Hello World” in every render and the React dev OCD in me can't wait to put a second dependency array like this
+
+[code]useEffect(()=>{console.log("Hello World")},[])
+
+So we have to always make sure it doesn't run into an infinite loop manually every time we use it.
+
+And that's it, we fixed the problem and the code above should only run once right?
+Technically but not always…
+
+The strict mode problem
+In development mode, if you want the benefits of the react strict mode this will actually be called twice.
+
+You can already see why this is a problem. Take this code for example
+
+[code]useEffect(()=>{
+  api.post("/view",{})
+},[])
+
+Let's say we have a code that sends an event that says, the user viewed the page like in the above useEffect. React on strict mode will run this effect twice and send a double event.
+
+You can make hacky work around with refs like below
+
+[code]export default function useEffectOnce(fn: () => void) {
+  const ref = useRef(false);
+  useEffect(() => {
+    if (ref.current) {
+      fn();
+    }
+    return () => {
+      ref.current = true;
+    };
+  }, [fn]);
+}
+
+But inherently this is an issue and is not an elegant fix, to say the least.
+
+The performance problem
+According to the official docs the useEffect hook runs after the rendering of the entire UI or component completes. So when we put an API call in it, the API call will start after the complete rendering of UI completes as follows:
+
+
+This is not optimal as although react is fast rendering UI will always consume some time and it will delay our API call which could just as well run on the start of the render.
+
+So the better approach would be fetching data and rendering it parallelly.
+
+How do we do that?
+
+React Query to the rescue
+React query does exactly what we discussed, the hooks like useQuery fetch data as soon as rendering starts so you don’t have to wait until react loads the entire component as follows:
+
+
+Here is an example
+
+[code]// with react query
+const { status, data, error, isFetching } = useQuery(
+  ['data'],
+  async () => {
+    const data = await (
+      await fetch(`${API_BASE_URL}/data`)
+    ).json()
+    return data
+  }
+)
+// without react query
+useEffect(() => {
+  try {
+    setLoading(true)(async () => {
+      const data = await (await fetch(`${API_BASE_URL}/data`)).json();
+      setData(data);
+    })();
+  } catch (error) {
+    setError(error);
+  } finally {
+    setLoading(false);
+  }
+}, []);
+
+Looking at the syntax we can see that react query use query not only executes instantly as the page loads but also handles a lot of things like loading states, error states and actual data in a single object returned by react query.
+Furthermore, rerunning/invalidating the query is as simple as.
+
+[code]queryClient.invalidateQueries(['data'])
+
+Some other notable libraries that also solve the problems are SWR, URQL and Apollo Client.
+
+Another way of solving the issue is by doing SSR so data already renders on the backend or even using features like react-router loaders.
+
+Conclusion
+Making API calls on useEffects can be error-prone or downright slow. So it's best to avoid it unless you certainly have to. You really want some library to handle the data fetching for you.

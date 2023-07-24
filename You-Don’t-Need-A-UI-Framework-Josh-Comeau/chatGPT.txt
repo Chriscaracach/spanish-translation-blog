@@ -1,0 +1,180 @@
+Los desarrolladores a menudo recurren a los frameworks de interfaz de usuario como Bootstrap o Material UI, con la esperanza de que les ahorren mucho tiempo y puedan construir rápidamente una aplicación con un aspecto profesional. Desafortunadamente, las cosas rara vez funcionan de esta manera. Vamos a hablar de ello.
+De vez en cuando, alguien me pregunta por mis recomendaciones sobre frameworks de interfaz de usuario. Por "framework de interfaz de usuario", me refiero a cualquier paquete de terceros que se centre en proporcionar componentes de interfaz de usuario con estilo. Esto incluye frameworks CSS como Bootstrap, así como bibliotecas de componentes JS como Material UI o Ant Design.
+
+Mi respuesta a esta pregunta tiende a tomar a la gente por sorpresa: No los uso, y no creo que deban ser utilizados para la mayoría de los productos dirigidos al consumidor. 😅
+
+Para ser claro, no tengo nada en contra de estas herramientas, y creo que hay algunos casos de uso válidos para ellas. Pero he visto a muchos desarrolladores recurrir a estas herramientas con expectativas poco realistas sobre los problemas que resolverán, o lo fácil que será construir aplicaciones con ellas.
+
+En este artículo, voy a argumentar por qué probablemente no necesitas estas herramientas. También compartiré algunas de mis estrategias preferidas para construir aplicaciones con un aspecto profesional sin un conocimiento profundo de diseño.
+
+La atracción de los frameworks de interfaz de usuario #
+Hay muchas razones por las que los desarrolladores recurren a los frameworks de interfaz de usuario. Estas son las tres razones más comunes que he visto:
+
+Quieren que su aplicación/sitio tenga un aspecto pulido y profesional, y estas herramientas proporcionan componentes de interfaz de usuario bien diseñados.
+Quieren poner algo en marcha rápidamente sin pasar mucho tiempo construyendo todo desde cero.
+Reconocen que muchos componentes de interfaz de usuario - cosas como ventanas modales, menús desplegables y herramientas de información - son realmente difíciles de hacer bien, especialmente cuando se considera la accesibilidad, por lo que quieren asegurarse de hacerlo bien.
+
+Estas son cosas totalmente razonables que querer, y puedo ver perfectamente el atractivo de encontrar una solución para estos problemas. Pero en algunos casos, creo que hay una discrepancia entre la expectativa y la realidad. En otros, creo que hay herramientas mejores para el trabajo.
+
+Vamos a ello.
+
+DISEÑO PROFESIONAL #
+Esta primera razón podría ser la más común. Hay muchos desarrolladores que quieren construir cosas, pero que no tienen un fondo en diseño. En lugar de pasar años aprendiendo a diseñar, ¿por qué no utilizar un paquete de terceros que proporcione componentes bellamente diseñados desde el principio?
+
+Aquí está el problema, en mi opinión: el diseño es mucho más que simplemente piezas con buen aspecto.
+
+Hace un tiempo, recibí un LEGO Nintendo Entertainment System como regalo:
+
+[img]
+
+Fue un kit muy divertido de construir. Si eres fanático de LEGO, ¡lo recomiendo altamente!
+
+Pero aquí está la cosa: pude construir este modelo porque el kit venía con un libro de 200 páginas que me decía exactamente dónde colocar cada ladrillo.
+
+Si me hubieran dado todas las piezas pero sin instrucciones, mi NES se vería mucho peor de lo que se ve. Tener bloques de alta calidad no es suficiente, también necesitas saber cómo usarlos.
+
+Una biblioteca de componentes puede darte botones bonitos, selectores de fechas y widgets de paginación, pero sigue siendo tu trabajo ensamblarlos.
+
+Los bloques en un sistema de diseño como Material Design fueron construidos por un talentoso equipo de diseño. Ese equipo comprende el marco y tiene las habilidades para ensamblar las piezas en interfaces hermosas. Tenemos acceso a las mismas piezas, pero eso no significa que automáticamente lograremos los mismos resultados.
+
+Recuerdo haber escuchado a un diseñador decir que solo Google puede hacer que las aplicaciones de Material Design se vean bien. La tienda de aplicaciones de Android está llena de aplicaciones de terceros que utilizan los mismos componentes diseñados profesionalmente pero que no se ven profesionales en absoluto.
+
+Hay muchos aspectos intangibles en un buen diseño, como el equilibrio, el espaciado y la consistencia. Para utilizar una biblioteca de componentes de manera efectiva, es necesario ponerse en los zapatos de los diseñadores que la crearon y entender cómo se pretende que se utilicen.
+
+Además, no importa cuán completa sea la biblioteca, nunca tendrá todas las piezas que se necesitan. Cada aplicación y sitio web es único y siempre habrá requisitos especiales. Crear un componente completamente nuevo que "se integre" con un sistema de diseño de terceros existente es realmente difícil.
+
+No creo que sea imposible, estoy seguro de que hay ejemplos de aplicaciones con estilos de terceros que se ven profesionales. Pero si puedes hacer que se vea bien, probablemente tengas habilidades de diseño significativas y no necesites estas herramientas en primer lugar.
+
+Puedo entender a los desarrolladores que quieren lanzar un proyecto que se vea profesional sin tener conocimientos de diseño... Pero por lo que he visto, generalmente no funciona de esa manera.
+
+AHORRAR TIEMPO #
+La siguiente razón que he escuchado es que los frameworks de UI ayudan a ahorrar tiempo. Construir una biblioteca completa de componentes desde cero es una tarea significativa que puede ser omitida al confiar en un framework de UI.
+
+Hay algo de verdad en esto, pero por lo que he visto, a menudo es una situación de la liebre y la tortuga.
+
+Pasé algunos años enseñando los fundamentos del desarrollo web a estudiantes de un bootcamp en la Universidad Concordia. El programa culmina en un proyecto personal de 2 semanas. Los estudiantes deciden qué construir y depende de ellos hacerlo. Como instructor, respondería preguntas y ayudaría a desbloquearlos.
+
+Notamos una tendencia: los estudiantes que eligen un framework de UI como Bootstrap o Material UI comienzan rápidamente y hacen un progreso rápido en los primeros días. Pero a medida que pasa el tiempo, se atascan. La brecha entre lo que necesitan y lo que proporciona la biblioteca de componentes se amplía. Y terminan gastando tanto tiempo tratando de moldear los componentes en la forma correcta.
+
+Recuerdo que un estudiante pasó toda una tarde tratando de modificar el encabezado de una biblioteca de CSS para que admitiera su navegación. Al final, decidieron desechar el componente de terceros y construyeron una alternativa ellos mismos en 10 minutos.
+
+Escribir tus propios estilos me recuerda un poco a escribir pruebas: es un poco más lento al principio, pero ese esfuerzo inicial tiene recompensas. A largo plazo, ahorrarás mucho tiempo, energía y frustración.
+
+USABILIDAD Y ACCESIBILIDAD #
+La última razón que he escuchado es una muy válida. La web no tiene una "biblioteca estándar" muy robusta cuando se trata de cosas como modales, menús desplegables y consejos. Construir un modal que funcione bien para usuarios de ratón, usuarios de teclado y usuarios de lectores de pantalla es increíblemente difícil.
+
+Los frameworks de UI tienen un registro de aciertos y errores cuando se trata de usabilidad y accesibilidad. Algunas de las bibliotecas son en realidad bastante buenas en este sentido. Pero en la mayoría de los casos, es un enfoque secundario.
+
+Afortunadamente, hay otra categoría de herramientas que se enfoca exclusivamente en la usabilidad y la accesibilidad, sin prescribir un montón de estilos.
+
+Aquí están algunas de mis herramientas favoritas en esta categoría:
+
+Reach UI:
+Un conjunto de primitivas centradas en la accesibilidad para React. Creado por Ryan Florence, co-creador de React Router y Remix.
+
+Headless UI:
+Un conjunto de componentes de UI completamente accesibles y sin estilos para React y Vue. Construido y mantenido por el equipo de Tailwind.
+
+Radix Primitives:
+Un conjunto de componentes centrados en la accesibilidad y sin estilos para React. Esta biblioteca tiene un conjunto muy amplio de componentes incluidos, ¡un montón de cosas realmente interesantes!
+
+React ARIA:
+Una biblioteca de hooks de React que puedes usar para construir componentes accesibles desde cero.
+
+Nota: Me doy cuenta de que esta lista se centra mucho en React; puede haber herramientas similares para Angular, Svelte y otros frameworks, pero no estoy tan activo en esas comunidades, así que no estoy seguro. ¡No dudes en hacérmelo saber en Twitter si conoces alguna!
+
+Nadie debería estar construyendo un modal desde cero en el año 2022, ¡pero eso no significa que necesites un marco de interfaz de usuario enormemente incluido de estilos! Existen herramientas que resuelven de manera precisa los desafíos más importantes de accesibilidad mientras permanecen totalmente agnósticas en cuanto a la estética y los estilos.
+
+Refutaciones #
+He estado hablando con desarrolladores sobre este tema durante un par de años y he escuchado algunas refutaciones bastante convincentes.
+
+FAMILIARIDAD #
+En primer lugar, Daniel Schutzsmith señaló que las herramientas "estándar de la industria" como Bootstrap tienen una gran ventaja: familiaridad.
+
+Es más fácil integrar a nuevos desarrolladores y diseñadores cuando se utilizan herramientas ampliamente comprendidas. Los nuevos miembros del equipo no tienen que dedicar mucho tiempo a aprender los detalles de un marco personalizado, pueden comenzar a trabajar de inmediato.
+
+Desde la perspectiva de una agencia que asume muchos proyectos a corto y mediano plazo, esto podría tener mucho sentido. No tienen que empezar cada nuevo proyecto desde cero. Y a medida que el equipo se vuelve cada vez más cómodo con la herramienta, aprenden a usarla de manera muy efectiva.
+
+No he trabajado mucho en agencias, por lo que es difícil para mí opinar al respecto. He pasado la mayor parte de mi carrera trabajando para empresas de productos. Ninguno de los lugares en los que he trabajado ha utilizado un marco de interfaz de usuario de terceros. Siempre construimos algo interno (por ejemplo, Wonder Blocks en Khan Academy o Walrus en DigitalOcean).
+
+HERRAMIENTAS INTERNAS #
+Creo que tiene sentido utilizar un marco de interfaz de usuario al construir herramientas internas u otros proyectos que no estén destinados al consumo público (por ejemplo, prototipos).
+
+Si el objetivo es obtener rápidamente algo en funcionamiento y no es necesario que la interfaz de usuario sea 100% profesional, creo que puede ser un ahorro de tiempo utilizar rápidamente varios componentes de terceros.
+
+¿Qué pasa con Tailwind y Chakra UI? #
+Entonces, no considero que Tailwind o Chakra UI estén en esta misma categoría de "marcos de interfaz de usuario".
+
+Tailwind no proporciona componentes listos para usar, pero sí proporciona tokens de diseño. Como dice Max Stoiber, Tailwind le da a los desarrolladores un conjunto de barreras de protección. Aún se necesita una intuición de diseño para utilizarlo eficazmente, pero no es tan desalentador como diseñar algo desde cero.
+
+Tailwind no proporciona componentes listos para usar, pero sí proporciona tokens de diseño. Como dice Max Stoiber, Tailwind le da a los desarrolladores un conjunto de barreras de protección. Aún se necesita una intuición de diseño para utilizarlo eficazmente, pero no es tan desalentador como diseñar algo desde cero.
+
+Chakra UI sí proporciona componentes con estilos predeterminados, pero son muy mínimos y de bajo nivel. En su mayoría, solo parecen versiones más bonitas de los valores predeterminados de la plataforma.
+
+Mi buena amiga Emi mencionó que le gusta usar Chakra UI porque le proporciona un conjunto de valores predeterminados sensatos para cosas como casillas de verificación y botones de radio. Ella es lo suficientemente buena en diseño para evitar los errores de personalización, pero no tan segura de sí misma como para sentirse cómoda creando un sistema de diseño completo desde cero. Esta herramienta es el punto intermedio perfecto para alguien en su situación.
+
+Creo que la diferencia es que estas soluciones no pretenden resolver el diseño por ti. Te ayudan a moverte en la dirección correcta, pero se aseguran de que todo sea personalizable y de que no estés encerrado en una estética de diseño específica.
+
+Mi sugerencia alternativa #
+Entonces, si eres un desarrollador solitario que quiere construir sitios web y aplicaciones con un aspecto profesional, pero que no tiene formación en diseño, ¿qué debes hacer?
+
+Tengo algunas sugerencias.
+
+DESARROLLA TU INTUICIÓN DE DISEÑO #
+Entonces, aquí está la mala noticia: creo que deberías dedicar un poco de tiempo a aprender algunos fundamentos de diseño.
+
+Esto es una de esas cosas en las que un poco puede marcar la diferencia. No necesitas ir a una escuela de arte o dedicar años a aprender una nueva habilidad. El diseño es difícil, pero no estamos tratando de convertirnos en diseñadores de clase mundial. Nuestros objetivos son mucho más modestos, y es posible que te sorprendas de lo rápido que se pueden alcanzar o de lo lejos que ya has llegado.
+
+Incluso si no estás muy interesado en el diseño, creo que desarrollar una intuición de diseño es una habilidad crítica para los desarrolladores front-end. Lo creas o no, constantemente estamos tomando decisiones de diseño en nuestro trabajo. Incluso el mockup de alta fidelidad más detallado todavía carece de un montón de contexto importante.
+
+Por ejemplo:
+
+Si tenemos suerte, puede que nos den 3 tamaños de pantalla, pero depende de nosotros decidir cómo debe comportarse la interfaz de usuario entre esos tamaños de pantalla.
+Los datos rara vez son tan limpios como aparecen en los mockups, y tenemos que decidir cómo manejar los nombres largos, los datos faltantes, etc.
+Frecuentemente, los estados de carga, vacío y de error faltan en los mockups.
+Una de mis habilidades sobrenaturales como desarrollador es tener suficiente sentido de diseño para poder descubrir qué hacer cuando me encuentro en una situación que no está claramente especificada en el diseño. En lugar de quedarme bloqueado mientras espero que el diseñador responda a mis preguntas, puedo confiar en mi intuición. No siempre lo haré bien, pero usualmente sí (¡y cuando no lo hago, es otra oportunidad para mejorar mi intuición de diseño!).
+
+¿Cómo se desarrolla una intuición de diseño?
+
+Si trabajas con un equipo de productos/diseño, ¡tienes un recurso tremendo a tu disposición! Piensa críticamente sobre los diseños que producen. Haz muchas preguntas: la mayoría de los diseñadores estarán encantados de ayudarte a comprender cómo se estructuran las cosas y por qué tomaron las decisiones que tomaron. Trátalo como un desafío de ingeniería. Puedes aprender los sistemas y procesos que conducen a buenos diseños.
+
+Escribí una publicación de blog hace algún tiempo llamada "Colaboración efectiva con productos y diseño". Va un poco más en profundidad sobre algunas de estas ideas.
+
+Si no trabajas con ningún diseñador (o no tienes amigos diseñadores), puedes intentar ingeniería inversa en los productos que usas todos los días. Toma nota de cómo están espaciadas las cosas y qué tamaños de fuente se utilizan. Con un ojo crítico, comenzarás a ver patrones.
+
+STEAL # (Acrónimo, buscar info, agregar link)
+Bueno, incluso con un agudo instinto de diseño, todavía es realmente difícil crear un diseño desde cero. Entonces, no hagamos eso.
+
+En lugar de eso, intentemos encontrar algunos diseños profesionales que sean similares a lo que estamos tratando de construir. Puedes buscar en sitios de la comunidad de diseñadores como Dribbble o Behance, o utilizar archivos como Awwwards.
+
+Por ejemplo, digamos que estamos construyendo una startup similar a Uber pero para perros, y estamos tratando de diseñar el panel de control del conductor. Una búsqueda en Dribbble para "panel de control" arroja una gran cantidad de diseños interesantes:
+
+[img]
+
+Dribbble tiende a inclinarse mucho hacia el lado del diseño, por lo que puede que desees utilizar productos del mundo real como inspiración. ¡Eso también funciona!
+
+El truco es utilizar múltiples fuentes. Si robas el 100% de un diseño, es plagio y una mala práctica. La gente se dará cuenta y causará problemas.
+
+En su lugar, podemos mezclar 3 o 4 diseños juntos para crear algo único. Por ejemplo, tal vez tomemos el esquema de color de un sitio, el diseño general y el espaciado de otro, y los estilos de tipografía del tercero. ¡De esta manera, podemos crear algo que se sienta fresco y original mientras aún tomamos inspiración de otras fuentes!
+
+Cuando he mencionado esta estrategia a diseñadores reales, se ríen y dicen que es lo que todos hacen. Creo que esta es su versión de la "broma" de que los programadores pasan la mitad de su tiempo buscando cosas en Google.
+
+Esta estrategia se siente como un truco de vida. No es fácil y requiere habilidades de diseño. Los diseños que uses como inspiración no coincidirán al 100% con lo que estás construyendo, y tendrás que usar tu intuición para completar los vacíos. Pero es la forma más rápida que he encontrado para obtener un diseño profesional sin tener experiencia en diseño.
+
+Poniéndolo todo junto #
+
+Como desarrolladores, puede ser tentador creer que un marco de UI nos absolverá de la necesidad de aprender algo sobre diseño. Desafortunadamente, por lo que he visto, generalmente no funciona de esa manera.
+
+Aquí está la buena noticia: ¡definitivamente puedes construir un producto con apariencia profesional sin un diseñador! Con algunos diseños de referencia de alta calidad y un poco de intuición de diseño, puedes construir algo que alcance el umbral de "suficientemente bueno", donde un producto se siente legítimo y "real".
+
+Hay otro aspecto del que no hemos hablado mucho: CSS.
+
+Muchos desarrolladores front-end luchan con CSS. ¡Yo también luché con ello! CSS es un lenguaje engañosamente complejo y a menudo puede sentirse inconsistente y frustrante, incluso después de tener años de experiencia con el lenguaje.
+
+Este es un problema en el que siento una gran pasión. Pasé todo el año pasado enfocado a tiempo completo en construir y desarrollar un curso de CSS para ayudar a los desarrolladores a ganar confianza con el lenguaje.
+
+Se llama CSS para desarrolladores de JavaScript y está hecho específicamente para personas que utilizan un framework de JS como React o Angular. El curso se centra en brindarte un modelo mental sólido para que tengas una comprensión intuitiva de cómo funciona CSS.
+
+Si sientes que CSS es impredecible, realmente espero que lo revises. Más de 9000 desarrolladores han tomado el curso y la respuesta ha sido abrumadoramente positiva.
+
+Puedes obtener más información aquí: css-for-js.dev.

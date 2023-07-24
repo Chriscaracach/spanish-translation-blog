@@ -1,0 +1,284 @@
+La seguridad es importante. Nadie quiere ser la persona que aboga por menos seguridad. Así que nadie quiere decirlo. Pero alguien tiene que hacerlo.
+
+Supongo que lo diré yo.
+
+La forma en que funciona la npm audit está rota. Su lanzamiento como predeterminado después de cada instalación con npm fue apresurado, poco considerado e inadecuado para las herramientas front-end.
+
+¿Has oído la historia del pastorcito mentiroso? Spoiler: el lobo se come las ovejas. Si no queremos que nuestras ovejas sean comidas, necesitamos mejores herramientas.
+
+A partir de hoy, la npm audit es una mancha en todo el ecosistema de npm. El mejor momento para solucionarlo fue antes de lanzarlo como predeterminado. El siguiente mejor momento para solucionarlo es ahora.
+
+En esta publicación, describiré brevemente cómo funciona, por qué está roto y qué cambios espero ver.
+
+Nota: este artículo está escrito con un tono crítico y un tanto sarcástico. Entiendo que es muy difícil mantener proyectos masivos como Node.js/npm, y que los errores pueden tardar en hacerse evidentes. Estoy frustrado solo por la situación, no por las personas involucradas. Mantuve el tono sarcástico porque mi nivel de frustración ha aumentado a lo largo de los años y no quiero pretender que la situación no es tan grave como realmente lo es. Sobre todo, estoy frustrado al ver a todas las personas para las que esta es su primera experiencia de programación, así como a todas las personas que se bloquean para implementar sus cambios debido a advertencias irrelevantes. ¡Estoy emocionado de que se esté considerando este problema y haré todo lo posible para proporcionar información sobre las soluciones propuestas! 💜
+
+¿Cómo funciona npm audit?
+Saltea esta parte si ya sabes cómo funciona.
+
+Tu aplicación Node.js tiene un árbol de dependencias. Podría verse así:
+
+your-app
+  - view-library@1.0.0
+  - design-system@1.0.0
+  - model-layer@1.0.0
+    - database-layer@1.0.0
+      - network-utility@1.0.0
+
+Lo más probable es que sea mucho más profundo.
+
+Supongamos que se descubre una vulnerabilidad en network-utility@1.0.0:
+
+your-app
+  - view-library@1.0.0
+  - design-system@1.0.0
+  - model-layer@1.0.0
+    - database-layer@1.0.0
+      - network-utility@1.0.0 (Vulnerable!)
+
+Esto se publica en un registro especial al que npm accederá la próxima vez que ejecute npm audit. Desde npm v6+, se te informará de esto después de cada npm install:
+
+1 vulnerabilities (0 moderate, 1 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Luego ejecutas npm audit fix, y npm intenta instalar la última versión de network-utility@1.0.1 con la corrección incluida. Si la capa de base de datos especifica que depende no exactamente de network-utility@1.0.0 sino de algún rango permisible que incluya 1.0.1, la corrección "simplemente funciona" y obtienes una aplicación funcional:
+
+your-app
+  - view-library@1.0.0
+  - design-system@1.0.0
+  - model-layer@1.0.0
+    - database-layer@1.0.0
+      - network-utility@1.0.1 (Fixed!)
+
+Alternativamente, tal vez database-layer@1.0.0 depende estrictamente de network-utility@1.0.0. En ese caso, el mantenedor de database-layer debe lanzar una nueva versión también, que permita network-utility@1.0.1 en su lugar:
+
+your-app
+  - view-library@1.0.0
+  - design-system@1.0.0
+  - model-layer@1.0.0
+    - database-layer@1.0.1 (Updated to allow the fix.)
+      - network-utility@1.0.1 (Fixed!)
+
+Finalmente, si no hay forma de actualizar el árbol de dependencias correctamente, puedes intentar npm audit fix --force. Se supone que esto se usa si database-layer no acepta la nueva versión de network-utility y tampoco lanza una actualización para aceptarla. Así que estás tomando las cosas en tus propias manos, arriesgándote potencialmente a cambios que podrían romper el sistema. Parece una opción razonable.
+
+Así es como se supone que funciona npm audit en teoría.
+
+Como alguien sabio dijo, en teoría no hay diferencia entre teoría y práctica. Pero en la práctica sí la hay. Y ahí es donde comienza toda la diversión.
+
+¿Por qué está roto npm audit?
+Veamos cómo funciona esto en la práctica. Usaré Create React App para mis pruebas.
+
+Si no estás familiarizado con él, es una fachada de integración que combina varias otras herramientas, incluyendo Babel, webpack, TypeScript, ESLint, PostCSS, Terser y otras. Create React App toma tu código fuente de JavaScript y lo convierte en una carpeta estática de HTML+JS+CSS. Cabe destacar que no produce una aplicación de Node.js.
+
+¡Creemos un nuevo proyecto!
+
+npx create-react-app myapp
+
+Inmediatamente después de crear un proyecto, veo esto:
+
+found 5 vulnerabilities (3 moderate, 2 high)
+  run `npm audit fix` to fix them, or `npm audit` for details.
+
+¡Oh no, eso parece malo! ¡Mi aplicación recién creada ya es vulnerable!
+
+O eso es lo que me dice npm.
+
+Ejecutemos npm audit para ver qué sucede.
+
+Primera "vulnerabilidad"
+Aquí está el primer problema reportado por npm audit:
+
+
+
+┌───────────────┬──────────────────────────────────────────────────────────────┐
+│ Moderate      │ Regular Expression Denial of Service                         │
+├───────────────┼──────────────────────────────────────────────────────────────┤
+│ Package       │ browserslist                                                 │
+├───────────────┼──────────────────────────────────────────────────────────────┤
+│ Patched in    │ >=4.16.5                                                     │
+├───────────────┼──────────────────────────────────────────────────────────────┤
+│ Dependency of │ react-scripts                                                │
+├───────────────┼──────────────────────────────────────────────────────────────┤
+│ Path          │ react-scripts > react-dev-utils > browserslist               │
+├───────────────┼──────────────────────────────────────────────────────────────┤
+│ More info     │ https://npmjs.com/advisories/1747                            │
+└───────────────┴──────────────────────────────────────────────────────────────┘
+
+
+
+Aparentemente, browserslist es vulnerable. ¿Qué es eso y cómo se usa? Create React App genera archivos CSS optimizados para los navegadores que apuntan. Por ejemplo, puedes indicar que solo apuntas a navegadores modernos en tu package.json:
+
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+
+Entonces, no incluirá hacks flexbox obsoletos en la salida. Dado que varias herramientas dependen del mismo formato de configuración para los navegadores que se apuntan, Create React App utiliza el paquete compartido browserslist para analizar el archivo de configuración.
+
+Entonces, ¿cuál es la vulnerabilidad aquí? "Negación de servicio de expresión regular" significa que hay una expresión regular en browserslist que, con una entrada maliciosa, podría volverse muy lenta. Por lo tanto, un atacante puede crear una cadena de configuración especial que, cuando se pasa a browserslist, podría ralentizarlo exponencialmente. Esto suena mal...
+
+¿Espera, ¿qué?! Recordemos cómo funciona su aplicación. Tiene un archivo de configuración en SU máquina. Construye SU proyecto. Obtiene HTML+CSS+JS estático en una carpeta. Lo coloca en hosting estático. Simplemente no hay forma de que el usuario de su aplicación afecte la configuración de su package.json. Esto no tiene ningún sentido. Si el atacante ya tiene acceso a su máquina y puede cambiar sus archivos de configuración, ¡tiene un problema mucho más grande que las expresiones regulares(regex) lentas!
+
+Bueno, supongo que esta "vulnerabilidad" "Moderada" no es ni moderada ni una vulnerabilidad en el contexto de un proyecto. Sigamos adelante.
+
+Veredicto: esta "vulnerabilidad" es absurda en este contexto.
+
+Segunda "vulnerabilidad"
+Aquí está el siguiente problema que npm audit ha informado útilmente:
+
+┌───────────────┬──────────────────────────────────────────────────────────────┐
+│ Moderate      │ Regular expression denial of service                         │
+├───────────────┼──────────────────────────────────────────────────────────────┤
+│ Package       │ glob-parent                                                  │
+├───────────────┼──────────────────────────────────────────────────────────────┤
+│ Patched in    │ >=5.1.2                                                      │
+├───────────────┼──────────────────────────────────────────────────────────────┤
+│ Dependency of │ react-scripts                                                │
+├───────────────┼──────────────────────────────────────────────────────────────┤
+│ Path          │ react-scripts > webpack-dev-server > chokidar > glob-parent  │
+├───────────────┼──────────────────────────────────────────────────────────────┤
+│ More info     │ https://npmjs.com/advisories/1751                            │
+└───────────────┴──────────────────────────────────────────────────────────────┘
+
+Veamos la cadena de dependencias webpack-dev-server > chokidar > glob-parent. Aquí, webpack-dev-server es un servidor de desarrollo que se utiliza para servir rápidamente tu aplicación localmente. Utiliza chokidar para observar tu sistema de archivos en busca de cambios (como cuando guardas un archivo en tu editor). Y utiliza glob-parent para extraer una parte de la ruta del sistema de archivos de un patrón de observación del sistema de archivos.
+
+¡Desafortunadamente, glob-parent es vulnerable! Si un atacante suministra una ruta de archivo especialmente diseñada, podría hacer que esta función sea exponencialmente lenta, lo que...
+
+¡Espera, ¿qué?! El servidor de desarrollo está en TU computadora. Los archivos están en TU computadora. El observador de archivos está utilizando la configuración que has especificado. Ninguna de esta lógica sale de tu computadora. Si tu atacante es lo suficientemente sofisticado como para iniciar sesión en tu máquina durante el desarrollo local, lo último que querrán hacer es crear rutas de archivo especiales y largas para ralentizar tu desarrollo. Querrán robar tus secretos. Así que esta amenaza es absurda.
+
+Parece que esta "vulnerabilidad moderada" no era ni moderada ni una vulnerabilidad en el contexto de un proyecto.
+
+Veredicto: esta "vulnerabilidad" es absurda en este contexto.
+
+Tercera "vulnerabilidad":
+Veamos esta otra:
+
+┌───────────────┬──────────────────────────────────────────────────────────────┐
+│ Moderate      │ Regular expression denial of service                         │
+├───────────────┼──────────────────────────────────────────────────────────────┤
+│ Package       │ glob-parent                                                  │
+├───────────────┼──────────────────────────────────────────────────────────────┤
+│ Patched in    │ >=5.1.2                                                      │
+├───────────────┼──────────────────────────────────────────────────────────────┤
+│ Dependency of │ react-scripts                                                │
+├───────────────┼──────────────────────────────────────────────────────────────┤
+│ Path          │ react-scripts > webpack > watchpack > watchpack-chokidar2 >  │
+│               │ chokidar > glob-parent                                       │
+├───────────────┼──────────────────────────────────────────────────────────────┤
+│ More info     │ https://npmjs.com/advisories/1751                            │
+└───────────────┴──────────────────────────────────────────────────────────────┘
+
+Espera, es lo mismo que arriba, pero a través de una ruta de dependencia diferente.
+
+Veredicto: esta "vulnerabilidad" es absurda en este contexto.
+
+Cuarta "vulnerabilidad":
+¡Vaya, esta parece ser realmente mala! npm audit tiene el atrevimiento de mostrarla en rojo:
+
+┌───────────────┬──────────────────────────────────────────────────────────────┐
+│ High          │ Denial of Service                                            │
+├───────────────┼──────────────────────────────────────────────────────────────┤
+│ Package       │ css-what                                                     │
+├───────────────┼──────────────────────────────────────────────────────────────┤
+│ Patched in    │ >=5.0.1                                                      │
+├───────────────┼──────────────────────────────────────────────────────────────┤
+│ Dependency of │ react-scripts                                                │
+├───────────────┼──────────────────────────────────────────────────────────────┤
+│ Path          │ react-scripts > @svgr/webpack > @svgr/plugin-svgo > svgo >   │
+│               │ css-select > css-what                                        │
+├───────────────┼──────────────────────────────────────────────────────────────┤
+│ More info     │ https://npmjs.com/advisories/1754                            │
+└───────────────┴──────────────────────────────────────────────────────────────┘
+
+¿Qué es este problema de "alta" gravedad? "Denegación de servicio". No quiero que se deniegue el servicio. Eso sería realmente malo... A menos que...
+
+Veamos el problema. Aparentemente, css-what, que es un analizador de selectores CSS, puede ser lento con una entrada especialmente diseñada. Este analizador es utilizado por un complemento que genera componentes de React a partir de archivos SVG.
+
+Entonces, lo que esto significa es que si el atacante toma el control de mi máquina de desarrollo o de mi código fuente, colocarán un archivo SVG especial que tendrá un selector CSS especialmente diseñado en él, lo que hará que mi compilación sea lenta. Eso tiene sentido...
+
+¡Espera, qué?! Si el atacante puede modificar el código fuente de mi aplicación, probablemente solo pondrán un minero de Bitcoin en él. ¿Por qué agregarían archivos SVG a mi aplicación, a menos que se puedan extraer bitcoins con SVG? Nuevamente, esto no tiene sentido.
+
+Veredicto: esta "vulnerabilidad" es absurda en este contexto.
+
+Así que, muy exagerado para ser de gravedad "alta".
+
+Quinta "vulnerabilidad":
+
+┌───────────────┬──────────────────────────────────────────────────────────────┐
+│ High          │ Denial of Service                                            │
+├───────────────┼──────────────────────────────────────────────────────────────┤
+│ Package       │ css-what                                                     │
+├───────────────┼──────────────────────────────────────────────────────────────┤
+│ Patched in    │ >=5.0.1                                                      │
+├───────────────┼──────────────────────────────────────────────────────────────┤
+│ Dependency of │ react-scripts                                                │
+├───────────────┼──────────────────────────────────────────────────────────────┤
+│ Path          │ react-scripts > optimize-css-assets-webpack-plugin > cssnano │
+│               │ > cssnano-preset-default > postcss-svgo > svgo > css-select  │
+│               │ > css-what                                                   │
+├───────────────┼──────────────────────────────────────────────────────────────┤
+│ More info     │ https://npmjs.com/advisories/1754                            │
+└───────────────┴──────────────────────────────────────────────────────────────┘
+
+Esto es exactamente lo mismo que arriba.
+
+Veredicto: esta "vulnerabilidad" es absurda en este contexto.
+
+¿Seguimos adelante?
+Hasta ahora, el pastorcito ha gritado "lobo" cinco veces. Dos de ellos son duplicados. El resto son problemas absurdos que no tienen importancia en el contexto de cómo se utilizan estas dependencias.
+
+Cinco alarmas falsas no serían tan malas.
+
+Desafortunadamente, hay cientos.
+
+Aquí hay algunos hilos típicos, pero hay muchos más enlazados desde aquí:
+
+[img]
+
+He pasado varias horas revisando todos los problemas de npm audit reportados en los últimos meses, y todos parecen ser falsos positivos en el contexto de una herramienta de compilación como Create React App.
+
+Por supuesto, es posible arreglarlos. Podríamos flexibilizar algunas de las dependencias de nivel superior para que no sean exactas (lo que llevaría a que se introduzcan errores en los parches con más frecuencia). Podríamos hacer más versiones solo para estar por delante de este teatro de seguridad.
+
+Pero esto es insuficiente. ¡Imagínese si sus pruebas fallaran el 99% de las veces por razones falsas! Esto desperdicia años de esfuerzo y hace que todos sean miserables:
+
+- Hace miserable a los principiantes porque se encuentran con esto como su primera experiencia de programación en el ecosistema Node.js. Como si instalar Node.js/npm no fuera lo suficientemente confuso (buena suerte si agregaste sudo en alguna parte porque un tutorial te lo dijo), esto es lo que les espera cuando intentan ejemplos en línea o incluso cuando crean un proyecto. Un principiante no sabe qué es una RegExp. Por supuesto, no tienen el conocimiento para poder saber si un DDoS de RegExp o la contaminación de prototipos es algo de lo que preocuparse cuando están usando una herramienta de construcción para producir un sitio HTML+CSS+JS estático.
+- Hace miserable a los desarrolladores experimentados porque tienen que perder tiempo haciendo trabajo obviamente innecesario o pelear con sus departamentos de seguridad tratando de explicar cómo npm audit es una herramienta rota no adecuada para auditorías de seguridad reales por diseño. Sí, de alguna manera se convirtió en una predeterminada en este estado.
+- Hace miserable a los mantenedores porque en lugar de trabajar en correcciones de errores y mejoras, tienen que incorporar correcciones de vulnerabilidades falsas que no pueden afectar su proyecto porque, de lo contrario, sus usuarios están frustrados, asustados o ambas cosas.
+- Algún día, hará miserable a nuestros usuarios porque hemos entrenado a toda una generación de desarrolladores para que no entiendan las advertencias debido a estar abrumados o simplemente las ignoren porque siempre aparecen, pero los desarrolladores experimentados les dicen (correctamente) que no hay un problema real en cada caso.
+
+No ayuda que npm audit fix (que la herramienta sugiere usar) tenga errores. Hoy ejecuté npm audit fix --force y esto bajó la dependencia principal a una versión de hace tres años con vulnerabilidades reales. Gracias, npm, buen trabajo.
+
+¿Qué sigue?
+No sé cómo solucionar esto. Pero yo no agregué este sistema en primer lugar, así que probablemente no sea la mejor persona para resolverlo. Todo lo que sé es que está terriblemente roto.
+
+Hay algunas soluciones posibles que he visto.
+
+- Mover la dependencia a devDependencies si no se ejecuta en producción. Esto ofrece una forma de especificar que alguna dependencia no se utiliza en rutas de código de producción, por lo que no hay riesgo asociado con ella. Sin embargo, esta solución es defectuosa:
+
+    - npm audit todavía advierte por las dependencias de desarrollo de manera predeterminada. Tienes que saber que para no ver las advertencias de las dependencias de desarrollo debes ejecutar npm audit --production. Las personas que saben hacer esto probablemente ya no confían en él de todas formas. Esto tampoco ayuda a los principiantes o a las personas que trabajan en empresas cuyos departamentos de seguridad quieren auditar todo.
+    - npm install todavía usa información de la simple auditoría de npm, por lo que efectivamente seguirás viendo todos los falsos positivos cada vez que instales algo.
+    - Como cualquier profesional de seguridad te dirá, las dependencias de desarrollo en realidad son un vector de ataque, y quizás uno de los más peligrosos porque es muy difícil de detectar y el código se ejecuta con supuestos de alta confianza. Es por eso que la situación es tan mala en particular: cualquier problema real queda enterrado debajo de docenas de no problemas que npm audit está entrenando a personas y mantenedores a ignorar. Es solo cuestión de tiempo hasta que esto suceda.
+- Incorporar todas las dependencias durante la publicación. Esto es lo que veo cada vez más que hacen paquetes similares a Create React App. Por ejemplo, tanto Vite como Next.js simplemente empaquetan sus dependencias directamente en el paquete en lugar de confiar en el mecanismo npm node_modules. Desde el punto de vista del mantenedor, las ventajas son claras: obtienes un tiempo de arranque más rápido, descargas más pequeñas y, como bonificación, no hay informes falsos de vulnerabilidades de tus usuarios. Es una forma ingeniosa de engañar al sistema, pero me preocupa los incentivos que npm está creando para el ecosistema. La incorporación de dependencias va en contra de todo el propósito de npm.
+- Ofrecer alguna forma de impugnar informes de vulnerabilidades. El problema no es del todo desconocido para Node.js y npm, por supuesto. Diferentes personas han trabajado en diferentes sugerencias para solucionarlo. Por ejemplo, hay una propuesta para una forma de resolver manualmente las advertencias de auditoría para que no se muestren de nuevo. Sin embargo, esto todavía pone la carga sobre los usuarios de la aplicación, que no necesariamente tienen contexto sobre qué vulnerabilidades más profundas en el árbol son reales o falsas. También tengo una propuesta: necesito una forma de marcar para mis usuarios que cierta vulnerabilidad no puede afectarlos de ninguna manera. Si no confías en mi juicio, ¿por qué estás ejecutando mi código en tu computadora? Estaría encantado de discutir otras opciones también.
+
+La raíz del problema es que npm agregó un comportamiento predeterminado que, en muchas situaciones, conduce a una tasa de falsos positivos del 99%+, crea una experiencia de programación inicial increíblemente confusa, hace que la gente luche con los departamentos de seguridad, hace que los mantenedores nunca quieran lidiar con el ecosistema de Node.js nunca más, y en algún momento llevará a que vulnerabilidades realmente malas pasen desapercibidas.
+
+Algo debe hacerse.
+
+Mientras tanto, planeo cerrar todos los problemas de GitHub de npm audit que vea en el futuro y que no correspondan a una vulnerabilidad real que pueda afectar al proyecto. Invito a otros maintainers a adoptar la misma política. Esto creará frustración para nuestros usuarios, pero el núcleo del problema está en npm. Estoy cansado de este teatro de seguridad. Node.js/npm tienen todo el poder para solucionar el problema. Estoy en contacto con ellos y espero ver este problema priorizado.
+
+Hoy en día, npm audit está roto por diseño.
+
+Principiantes, desarrolladores experimentados, maintainers, departamentos de seguridad y, lo más importante, nuestros usuarios merecen algo mejor.

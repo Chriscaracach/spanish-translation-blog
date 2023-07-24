@@ -1,0 +1,92 @@
+Por qué useEffect no es el mejor lugar para hacer llamadas a API
+Las decisiones de diseño que ha tomado el equipo de React en el gancho useEffect siguen siendo objeto de debate. A algunas personas les gusta y a otras no.
+
+Si no provienes del mundo de React, definitivamente sonará extraño porque su comportamiento predeterminado es el temido "Bucle de Renderizado Infinito", al que es bastante fácil acceder. Por ejemplo:
+
+[code]useEffect(()=>{console.log("Hello World")})
+
+¿Parece bien, verdad?
+No, esto imprimirá "Hola mundo" en cada renderizado y el perfeccionista de React que hay en mí no puede esperar para poner un segundo array de dependencias como este:
+
+[code]useEffect(()=>{console.log("Hello World")},[])
+
+Así que siempre tenemos que asegurarnos de que no caiga en un bucle infinito manualmente cada vez que lo usamos.
+
+Y eso es todo, resolvimos el problema y el código anterior debería ejecutarse solo una vez, ¿verdad?
+Técnicamente, pero no siempre...
+
+El problema del modo estricto
+En el modo de desarrollo, si desea obtener los beneficios del modo estricto de React, esto en realidad se llamará dos veces.
+
+Ya puedes ver por qué esto es un problema. Toma este código como ejemplo:
+
+[code]useEffect(()=>{
+  api.post("/view",{})
+},[])
+
+Digamos que tenemos un código que envía un evento que dice que el usuario vio la página, como en el useEffect anterior. React en modo estricto ejecutará este efecto dos veces y enviará un evento doble.
+
+Puedes hacer un truco con refs como se muestra a continuación:
+
+[code]export default function useEffectOnce(fn: () => void) {
+  const ref = useRef(false);
+  useEffect(() => {
+    if (ref.current) {
+      fn();
+    }
+    return () => {
+      ref.current = true;
+    };
+  }, [fn]);
+}
+
+Pero inherentemente esto es un problema y no es una solución elegante, por decir lo menos.
+
+El problema de rendimiento
+Según la documentación oficial, el gancho useEffect se ejecuta después de que se completa el renderizado de toda la interfaz de usuario o componente. Por lo tanto, cuando colocamos una llamada a la API en él, la llamada a la API comenzará después de que se complete el renderizado completo de la interfaz de usuario de la siguiente manera:
+
+Esto no es óptimo ya que aunque React es rápido en el renderizado, el renderizado de la interfaz de usuario siempre consumirá algo de tiempo y retrasará nuestra llamada a la API, que podría ejecutarse igualmente al comienzo del renderizado.
+
+Por lo tanto, un enfoque mejor sería obtener datos y renderizarlos en paralelo.
+
+¿Cómo lo hacemos?
+
+React Query al rescate
+React Query hace exactamente lo que discutimos, los hooks como useQuery obtienen los datos tan pronto como comienza el renderizado para que no tengas que esperar hasta que React cargue todo el componente, como se muestra a continuación:
+
+Aquí hay un ejemplo:
+
+[code]// with react query
+const { status, data, error, isFetching } = useQuery(
+  ['data'],
+  async () => {
+    const data = await (
+      await fetch(`${API_BASE_URL}/data`)
+    ).json()
+    return data
+  }
+)
+// without react query
+useEffect(() => {
+  try {
+    setLoading(true)(async () => {
+      const data = await (await fetch(`${API_BASE_URL}/data`)).json();
+      setData(data);
+    })();
+  } catch (error) {
+    setError(error);
+  } finally {
+    setLoading(false);
+  }
+}, []);
+
+Al mirar la sintaxis podemos ver que React Query no solo ejecuta la consulta instantáneamente cuando se carga la página, sino que también maneja muchas cosas como estados de carga, estados de error y datos reales en un solo objeto devuelto por React Query. Además, volver a ejecutar/invalidar la consulta es tan simple como:
+
+[code]queryClient.invalidateQueries(['data'])
+
+Algunas otras bibliotecas notables que también resuelven estos problemas son SWR, URQL y Apollo Client.
+
+Otra forma de resolver el problema es haciendo SSR para que los datos ya se rendericen en el backend o incluso usando características como react-router loaders.
+
+Conclusión
+Hacer llamadas a API en useEffects puede ser propenso a errores o extremadamente lento. Por lo tanto, es mejor evitarlo a menos que sea absolutamente necesario. Realmente quieres que alguna biblioteca maneje la obtención de datos por ti.

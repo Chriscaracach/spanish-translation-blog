@@ -1,0 +1,13 @@
+Bienvenidos a mi blog
+Christian Caracach
+
+Mi nombre es Christian. Tengo 31 años (por ahora) y soy de Unquillo, Córdoba (Argentina). Hace un tiempo que soy Desarrollador Frontend para una compañía que se llama VelaONE de EEUU. 
+Siempre quise tener un blog, pero me di cuenta que mi habilidades son nulas en la escritura de contenido. Simplemente no me sale. Pero hace poco me di cuenta que quizás no puedo escribir, pero puedo traducir artículos que están en inglés. 
+Ésto lo descubrí un día en el que estaba leyendo el blog de Kent C. Dodds (link) y me encontré con ésta leyenda (imagen).
+Dije "eu, en serio nadie le traduce los blogposts a Kent C. Dodds?" - "Lo voy a hacer yo".
+Cuento con la experiencia de haber contribuido con la traducción de unos cuantos ejercicios de FreeCodeCamp (de las primeras dos certificaciones). Asi que por qué no...
+En éste blog voy a traducir artículos (del inglés al español-argentino) que a mí me interesen sobre programación. Seguro va a estar más enfocado a React y todo su ecosistema, pero no descarto traducir artículos relacionados a CSS, a Javascript, al mundo IT en general.
+Pero antes de terminar tengo que sincerarme y hacer dos avisos MUY importantes:
+1 - No soy un traductor, no soy profesor de inglés, no tengo ninguna titulación en eso. Las traducciones no van a ser perfectas, si querés corregirme algun error, bienvenido sea, mandame un mail buena onda a christiancaracach@gmail.com
+2 - Está bueno leer artículos traducidos al español (español argentino), pero no te olvides que en éste rubro, mientras más inglés sepas, mejor, así que también intentá leer los originales asi vas practicando.
+Muchas gracias por su atención, que lo disfruten.
