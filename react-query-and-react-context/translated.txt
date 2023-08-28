@@ -1,0 +1,165 @@
+React Query y React Context - Dominik Dorfmeister (TkDodo) - 22.07.2023
+
+Una de las mejores características de React Query es que puedes usar una consulta donde quieras en tu árbol de componentes: Tu componente <ProductTable> puede obtener sus propios datos, colocados en el mismo lugar donde los necesitas:
+
+[code]
+function ProductTable() {
+  const productQuery = useProductQuery()
+
+  if (productQuery.data) {
+    return <table>...</table>
+  }
+
+  if (productQuery.isError) {
+    return <ErrorMessage error={productQuery.error} />
+  }
+
+  return <SkeletonLoader />
+}
+
+Para mí, esto es genial porque hace que el ProductTable esté desacoplado e independiente, es responsable de leer sus propias dependencias: los datos de los productos. Si ya están en la caché, perfecto, simplemente los leeremos. Si no es así, iremos a buscarlos. Y podemos ver patrones similares surgir con los Componentes del Servidor de React. Ellos también nos permiten obtener datos directamente dentro de nuestros componentes. Ya no hay divisiones arbitrarias entre componentes con estado y sin estado, o entre componentes inteligentes y tontos.
+
+Poder obtener datos directamente en un componente, donde lo necesitas, es inmensamente útil. Literalmente podemos tomar el componente ProductTable y moverlo a cualquier lugar de nuestra aplicación, y simplemente funcionará. El componente es muy resistente al cambio, que es la razón principal por la cual abogo por acceder a tu consulta directamente donde sea necesario (a través de un hook personalizado), tanto en el punto 10: React Query como gestor de estado, como en el punto 21: Pensando en React Query.
+
+Sin embargo, no es una solución infalible, ya que conlleva compromisos. Esto no debería ser sorprendente, porque al final del día, todo implica compromisos. Pero, ¿qué estamos intercambiando exactamente aquí?
+
+Siendo autosuficiente
+Para que un componente sea autónomo, significa que debe manejar casos en los que los datos de la consulta no están disponibles todavía, en particular: los estados de carga y error. Esto no es un gran problema para nuestro componente <ProductTable>, porque muy a menudo, cuando se carga por primera vez, en realidad mostrará ese <SkeletonLoader />.
+
+Pero hay muchas otras situaciones en las que solo queremos leer información de algunas partes de nuestra consulta, donde sabemos que la consulta ya se ha utilizado más arriba en el árbol. Por ejemplo, podríamos tener una userQuery que contiene información sobre el usuario que ha iniciado sesión:
+
+[code]
+export const useUserQuery = (id: number) => {
+  return useQuery({
+    queryKey: ['user', id],
+    queryFn: () => fetchUserById(id),
+  })
+}
+export const useCurrentUserQuery = () => {
+  const id = useCurrentUserId()
+
+  return useUserQuery(id)
+}
+
+Probablemente utilizaremos esta consulta bastante temprano en nuestro árbol de componentes, para verificar qué derechos tiene el usuario que ha iniciado sesión, y esto podría determinar si realmente podemos ver la página o no. Es información esencial que queremos en todas partes de nuestra página.
+
+Ahora más abajo en el árbol, podríamos tener un componente que quiera mostrar el nombre de usuario, que podemos obtener del gancho useCurrentUserQuery:
+
+[code]
+function UserNameDisplay() {
+  const { data } = useCurrentUserQuery()
+  return <div>User: {data.userName}</div>
+}
+
+Por supuesto, TypeScript no nos dejará hacerlo, porque los datos podrían ser potencialmente indefinidos. Pero nosotros ya sabemos: no puede ser indefinido, porque en nuestra situación, UserNameDisplay no se renderizará sin que la consulta ya se haya iniciado más arriba en el árbol.
+
+Ese es un pequeño dilema. ¿Queremos simplemente silenciar a TS aquí y hacer data!.userName, porque sabemos que estará definido? ¿Optamos por la seguridad y hacemos data?.userName (lo cual es posible aquí, pero puede no ser tan fácil de lograr en otras situaciones)? ¿Agregamos simplemente una protección: if (!data) return null? ¿O añadimos manejo adecuado de carga y errores a las 25 ubicaciones en las que llamamos a useCurrentUserQuery?
+
+Para ser honesto, creo que todas esas formas son un tanto subóptimas. No quiero llenar mi base de código con comprobaciones que "nunca deberían ocurrir" (según mi conocimiento actual). Pero tampoco quiero ignorar TypeScript, porque (como es habitual), TS tiene razón.
+
+Una dependencia implícita
+Nuestro problema surge del hecho de que tenemos una dependencia implícita: una dependencia que solo existe en nuestra mente, en nuestro conocimiento de la estructura de la aplicación, pero que no es visible en el propio código.
+
+A pesar de que sabemos que podemos llamar con seguridad a useCurrentUserQuery sin tener que comprobar si los datos no están definidos, ningún análisis estático puede verificar esto. Nuestros compañeros de trabajo podrían no saberlo. Yo mismo podría no saberlo dentro de 3 meses.
+
+La parte más peligrosa es que podría ser cierto ahora, pero podría dejar de serlo en el futuro. Podemos decidir renderizar otra instancia de UserNameDisplay en algún lugar de nuestra aplicación, donde es posible que no tengamos datos de usuario en la caché, o donde podríamos tener datos de usuario en la caché condicionalmente, por ejemplo, si hemos visitado una página diferente antes.
+
+Esto es completamente opuesto al componente <ProductTable>: en lugar de ser resistente al cambio, se vuelve propenso a errores en las refactorizaciones. No esperaríamos que el componente UserNameDisplay se rompiera solo porque movemos algunos componentes aparentemente no relacionados...
+
+Hacerlo explícito
+La solución es, por supuesto, hacer que la dependencia sea explícita. Y no hay mejor manera de hacerlo que con React Context:
+
+Contexto de React
+Existe un mito bastante extendido sobre el Contexto de React, así que aclaremos esto: No, el Contexto de React no es un administrador de estado. Puede convertirse en una solución aparentemente buena para la gestión de estado cuando se combina con useState o useReducer, pero para ser honesto, nunca me ha gustado realmente este enfoque, ya que he tenido situaciones problemáticas como estas demasiado a menudo:
+
+[tweet]
+
+Entonces, lo más probable es que estés mejor utilizando una herramienta dedicada. Mark Erikson, el mantenedor de Redux y autor de publicaciones de blog muy extensas, tiene un buen artículo sobre ese tema: Respuestas en Blog: Por qué el Contexto de React no es una herramienta de "gestión de estado" (y por qué no reemplaza a Redux).
+
+Mi tuit ya lo menciona: el Contexto de React es una herramienta de inyección de dependencias. Te permite definir qué "cosas" necesita tu componente para funcionar, y cualquier componente padre es responsable de proporcionar esa información.
+
+Esto es conceptualmente lo mismo que el prop-drilling, que es el proceso de pasar props a través de múltiples capas. El Contexto te permite hacer lo mismo: tomar algunos valores y pasarlos como props a los hijos, excepto que puedes evitar algunas capas:
+
+[img]
+[alt]Árbol de componentes que muestra la transferencia de props a través de dos componentes vs. la transferencia de contexto donde el nieto puede leerlo directamente.
+
+Con el contexto, simplemente te saltas al intermediario. En nuestro ejemplo de useCurrentUserQuery, puede ayudarnos a hacer que esa dependencia sea explícita: en lugar de leer useCurrentUserQuery directamente en todos los componentes donde queremos evitar la comprobación de disponibilidad de datos, lo leemos desde el Contexto de React. Y ese contexto será llenado por el componente padre que realmente realiza la primera comprobación:
+
+[code]
+const CurrentUserContext = React.CreateContext<User | null>(null)
+
+export const useCurrentUserContext = () => {
+  return React.useContext(CurrentUserContext)
+}
+
+export const CurrentUserContextProvider = ({
+  children,
+}: {
+  children: React.ReactNode
+}) => {
+  const currentUserQuery = useCurrentUserQuery()
+
+  if (currentUserQuery.isLoading) {
+    return <SkeletonLoader />
+  }
+
+  if (currentUserQuery.isError) {
+    return <ErrorMessage error={currentUserQuery.error} />
+  }
+
+  return (
+    <CurrentUserContext.Provider value={currentUserQuery.data}>
+      {children}
+    </CurrentUserContext.Provider>
+  )
+}
+
+Aquí, tomamos la currentUserQuery y colocamos los datos resultantes en el Contexto de React, si existen (eliminando los estados de carga y error de antemano). Luego podemos leer desde ese contexto de manera segura en nuestros componentes hijos, por ejemplo, en el componente UserNameDisplay:
+
+[code]
+function UserNameDisplay() {
+  const data = useCurrentUserContext()
+  return <div>User: {data.username}</div>
+}
+
+Con eso, hemos convertido nuestra dependencia implícita (sabemos que los datos se han obtenido más arriba en el árbol) en una dependencia explícita. Siempre que alguien vea UserNameDisplay, sabrá que necesitan tener los datos proporcionados desde CurrentUserContextProvider. Esto es algo que puedes tener en cuenta al refactorizar. Si cambias dónde se renderiza el Proveedor, también sabrás que afectará a todos los componentes hijos que utilicen ese contexto. Esto es algo que no puedes saber cuando un componente solo utiliza una consulta, porque las consultas suelen ser globales en toda tu aplicación, y los datos podrían o no existir.
+
+Agradando a TypeScript
+A pesar de todo, TypeScript aún no estará muy contento, porque el Contexto de React está diseñado para funcionar incluso sin un Proveedor, en cuyo caso te proporcionará el valor predeterminado del Contexto, que en nuestro caso es nulo. Dado que nunca queremos que useCurrentUserContext funcione en una situación en la que estemos fuera de un Proveedor, podemos agregar una invariante a nuestro hook personalizado:
+
+[code]
+export const useCurrentUserContext = () => {
+  const currentUser = React.useContext(CurrentUserContext)
+  if (!currentUser) {
+    throw new Error('CurrentUserContext: No value provided')
+  }
+
+  return currentUser
+}
+
+Este método asegura que fallaremos de manera rápida y con un buen mensaje de error si alguna vez accedemos accidentalmente a useCurrentUserContext en el lugar equivocado. Y con esto, TypeScript inferirá el valor "User" para nuestro hook personalizado, por lo que podemos usarlo de manera segura y acceder a sus propiedades.
+
+Sincronización de Estado
+Podrías estar pensando: ¿No es esto una "sincronización de estado" - copiar un valor de React Query y ponerlo en otro método de distribución de estado?
+
+La respuesta es: ¡No, no lo es! La única fuente de verdad sigue siendo la consulta (query). No hay forma de cambiar el valor de contexto aparte del Proveedor (Provider), que siempre reflejará los datos más recientes que tiene la consulta. Nada se copia aquí y nada puede desincronizarse. Pasar datos desde React Query como una propiedad (prop) a un componente hijo tampoco es una "sincronización de estado", y dado que el contexto es similar a la transmisión de propiedades (prop drilling), tampoco es una "sincronización de estado".
+
+Cascadas de Solicitudes
+Nada está exento de desventajas, y esta técnica tampoco lo está. Específicamente, podría crear cascadas de solicitudes en la red, ya que el árbol de componentes se detendrá en su renderización (se "suspende") en el Proveedor (Provider), por lo que los componentes secundarios no se renderizarán y no podrán realizar solicitudes a la red, incluso si no están relacionados.
+
+Principalmente consideraría este enfoque para los datos que son obligatorios para mi sub-árbol: la información del usuario es un buen ejemplo, ya que de todos modos podríamos no saber qué renderizar sin esos datos.
+
+Suspense
+Hablando sobre Suspense: Sí, puedes lograr una arquitectura similar con React Suspense, y sí, tiene la misma desventaja: posibles cascadas de solicitudes, de las cuales ya he hablado en el punto #17: Alimentando la Caché de Consultas (Query Cache).
+
+Un problema es que en la versión principal actual (v4), usar "suspense: true" en tu consulta (query) no estrechará el tipo de datos, porque todavía hay formas de desactivar la consulta y evitar que se ejecute.
+
+Sin embargo, en la versión v5, habrá un gancho explícito llamado "useSuspenseQuery", donde los datos están garantizados para estar definidos una vez que el componente se renderiza. Con eso, podemos hacer:
+
+[code]
+function UserNameDisplay() {
+  const { data } = useSuspenseQuery(...)
+  return <div>User: {data.username}</div>
+}
+
+y TypeScript estará contento al respecto. 🎉
