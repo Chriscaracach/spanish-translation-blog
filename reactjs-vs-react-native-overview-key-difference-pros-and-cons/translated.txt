@@ -1,0 +1,89 @@
+ReactJs vs React Native: Resumen, diferencias clave, ventajas y desventajas
+The React Native Log
+
+React es una de las bibliotecas de JavaScript más populares para construir aplicaciones web. Es utilizada por grandes empresas de tecnología de todo el mundo, incluyendo Instagram, Facebook, Netflix y otros. React Native es un framework basado en React que ayuda a construir aplicaciones móviles multiplataforma.
+
+Según la encuesta anual de StackOverflow, un recurso importante para programadores, React ocupa el segundo lugar en una lista de los frameworks más populares entre los desarrolladores web. Supera ampliamente a sus competidores directos, Vue.js y Angular.js.
+
+¿Qué es React.js?
+React.js es una biblioteca de JavaScript para construir aplicaciones web que cambian su estado sin recargar las páginas. Es una solución perfecta para construir interfaces de usuario complejas con una gran cantidad de contenido dinámico que se transforma a medida que los usuarios interactúan con los elementos de la página.
+
+En 2011, el ingeniero de Facebook Jordan Valke creó FaxJs, un prototipo de React. El código fuente de la biblioteca se hizo público en 2013. Desde entonces, React ha evolucionado desde una herramienta prometedora para optimizar aplicaciones web hasta convertirse en un componente de desarrollo indispensable.
+
+Una de sus principales características es que una aplicación impulsada por React puede renderizarse tanto en el lado del servidor como en el lado del cliente cuando sea necesario. Cuando los desarrolladores de React idearon un mecanismo para simplificar la renderización en el lado del servidor, la biblioteca ganó popularidad. Este enfoque ayuda a crear aplicaciones de alto rendimiento con una buena optimización.
+
+[img]
+
+Beneficios de React.js
+Uno de los principales beneficios de React.js es que hace que el desarrollo sea más eficiente al permitir que el programador controle el ciclo de representación de los componentes de la aplicación. React es ideal para crear una interfaz dinámica que responde rápidamente a las acciones del usuario.
+
+La primera característica importante de React es un enfoque declarativo activamente utilizado. Un desarrollador puede describir el comportamiento de los elementos en función de ciertas acciones realizadas por un usuario y, de esta manera, controlar el flujo, en contraposición al enfoque imperativo.
+
+El segundo principio es la utilización de componentes. Una interfaz se compone de "bloques de construcción" que se pueden transformar según se desee. Un programador describe los componentes utilizando la sintaxis JSX, que es similar a HTML pero se considera más legible que JavaScript.
+
+El tercer elemento clave es el DOM virtual, lo que significa que durante el trabajo, la interacción se realiza con una copia más ligera del DOM. Cuando es necesario actualizar el árbol DOM, se compara con la copia virtual y solo se representan los elementos alterados. Para los usuarios, esto se traduce en una representación más rápida y un menor consumo de recursos del dispositivo.
+
+[img]
+
+React es utilizado por muchas empresas grandes para construir poderosas aplicaciones web que pueden ser constantemente mejoradas y mantenidas a lo largo del tiempo.
+
+Beneficios clave de React desde la perspectiva del cliente:
+
+- Alto rendimiento. Los elementos cambian su estado al instante ya que el sistema actualiza objetos específicos en lugar de toda la página.
+- Reutilización de componentes. Los desarrolladores pueden tomar elementos necesarios de bibliotecas de terceros de componentes predefinidos y ensamblar una interfaz bloque por bloque. Esto incluye elementos de diseño de materiales de Material-UI, componentes del framework de Bootstrap de React-Bootstrap y muchos otros. Esto es beneficioso para los clientes, ya que los programadores gastan menos tiempo construyendo la interfaz de usuario.
+- Mantener los beneficios de las aplicaciones clásicas. La mayoría de los frameworks modernos ofrecen renderización en el lado del servidor. React puede imitar el comportamiento disponible en las aplicaciones clásicas por defecto, lo cual es positivo.
+- Trabajar con una gran cantidad de componentes. Si es necesario, una aplicación web basada en React puede optimizarse para manejar grandes cantidades de datos, aunque requerirá bastante tiempo.
+- Un gran número de herramientas de automatización. Los desarrolladores tienen ESLint para encontrar errores en el código JS, un conjunto de herramientas proporcionado por React Testing Library para pruebas, etc.
+- La principal ventaja de usar React desde un punto de vista empresarial es su alta popularidad. No es un problema encontrar un desarrollador, y también es posible reemplazar al contratista si es necesario. Un nuevo programador entenderá la esencia del producto, analizará el enfoque del colega y se pondrá en marcha.
+
+Trampas y desafíos
+Si un cliente necesita un sitio con un gran número de páginas y planea promocionarlo en los motores de búsqueda, elegir React como núcleo conducirá inevitablemente a la necesidad de la renderización en el servidor. Esto complica el desarrollo y afecta el costo final del proyecto.
+
+Al mismo tiempo, React tiene una documentación bien diseñada. Está respaldado por una comunidad activa de desarrolladores, que es una de las más grandes del mundo. Los miembros de la comunidad siempre están dispuestos a ayudar, y las soluciones para las tareas más comunes se describen en recursos populares.
+
+Otra desventaja está asociada con un pequeño número de componentes no estándar. Si necesita algo complicado, tendrá que crearlo usted mismo. Y el tiempo de desarrollo aumentará significativamente si hay muchos de estos componentes incluidos en la interfaz.
+
+Las bibliotecas de componentes de React son tanto una pérdida como una ganancia. Los desarrolladores deben integrar cada "bloque de construcción" en un "edificio terminado"; es decir, no se trata solo de agregar algunos "ladrillos" nuevos, sino de convertirlos en parte de un gran ecosistema. A veces, esto lleva mucho tiempo.
+
+El principal inconveniente es que React es simplemente un conjunto de componentes diferentes. Los desarrolladores pueden elegir su propio conjunto de tecnología, y cada una de las herramientas vendrá con ventajas y desventajas.
+
+¿Qué es React Native?
+React Native es un marco para el desarrollo de aplicaciones móviles multiplataforma, basado en React.js. Es un producto creado por programadores de Facebook y puesto a disposición de la comunidad en 2015.
+
+Los programadores que conocen JavaScript y la sintaxis de React pueden dominar fácilmente el marco y construir aplicaciones para teléfonos inteligentes tanto en Android como en iOS sin necesidad de dividir la tarea en múltiples equipos de desarrollo.
+
+Vale la pena señalar en esta reseña de React Native que una aplicación consta de dos elementos principales: el núcleo de JS y una parte nativa que se ejecutan en paralelo.
+
+[img]
+
+Beneficios de React Native
+La principal ventaja de React Native es su núcleo en forma de React, aunque la interfaz se muestra como si estuviera creada con la ayuda de herramientas nativas para Android e iOS. Los usuarios no notarán la diferencia entre aplicaciones basadas en Swift y React Native.
+
+Muchos gigantes de la tecnología utilizan RN para combinar código con soluciones nativas. Una parte del código puede escribirse en Java para Android o Swift para iOS e integrarse en el código de React Native.
+
+La diferencia global entre React y React Native es que el primero crea el DOM en un navegador, mientras que RN se integra en la arquitectura de aplicaciones móviles basadas en Android e iOS.
+
+Los principales beneficios desde una perspectiva empresarial son:
+
+- Enorme popularidad. React Native se hizo público hace solo seis años, pero desde entonces han aparecido muchos componentes que simplifican el desarrollo.
+- Desarrollo simultáneo. El cliente recibe una aplicación para dos de los principales sistemas operativos móviles de una sola vez. No es necesario pagar por dos equipos separados.
+- Nivel de productividad suficiente. Las aplicaciones basadas en React Native están a la par con sus contrapartes nativas cuando se trata de productos con funcionalidad básica.
+- Arquitectura modular. Permite dividir una aplicación en módulos intercambiables, lo que hace que el proceso de creación de un producto sea universal.
+
+[img]
+
+El análisis instantáneo de cambios, el tiempo reducido de actualización de aplicaciones y otros beneficios hacen de React Native una de las mejores herramientas para construir productos para Android e iOS.
+
+Trampas y Desventajas
+RN es adecuado para aplicaciones con lógica compleja que requieren integración con el hardware del dispositivo, pero solo si participan desarrolladores que utilizan tecnologías nativas. Si necesita importar contactos o utilizar Bluetooth, puede usar una biblioteca nativa para eso de la comunidad de RN, sin embargo, cuando se necesita personalización, será bastante difícil implementarla sin conocer la parte nativa. Sin embargo, no hay una mejor alternativa que RN cuando se necesitan interfaces rápidas basadas en API predefinidas.
+
+Además de lo anterior, React Native tiene varias otras desventajas, a saber, aplicaciones grandes. Si crea productos basados en bibliotecas nativas para Android e iOS, el archivo de instalación será menos intensivo en recursos. Esto se debe a que RN agrega sus propios assets al paquete de la aplicación.
+
+El principal riesgo para las empresas es la falta de estabilidad garantizada. Google y Apple proporcionan soporte a largo plazo para aplicaciones construidas con bibliotecas nativas. Sin embargo, si Facebook deja de invertir en React Native, un producto impulsado por RN puede dejar de funcionar.
+
+Comparar React Native vs. React.js solo tiene sentido si un cliente no comprende cuál es la opción adecuada para un proyecto en particular. Estas son herramientas relacionadas que resuelven el mismo problema de diferentes maneras. El marco de JS está diseñado para crear aplicaciones web, y RN está dirigido al desarrollo para dispositivos móviles.
+
+[img]
+[alt]Plataformas de desarrollo móvil multiplataforma utilizadas por desarrolladores de todo el mundo en 2019-2020, según Statista
+
+React.js reúne tecnología y React Native puede formar parte de aplicaciones con código nativo. Sin embargo, la integración de RN en una aplicación nativa es relevante principalmente para empresas grandes o proyectos específicos. En este escenario, se realizarán cálculos complejos utilizando funciones del sistema, mientras que la representación de la interfaz de usuario se realizará mediante React.

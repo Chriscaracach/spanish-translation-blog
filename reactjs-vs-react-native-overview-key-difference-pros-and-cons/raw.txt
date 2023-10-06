@@ -1,0 +1,86 @@
+React is one of the most popular JavaScript libraries for building web applications. It is used by large IT companies from all over the world, including Instagram, Facebook, Netflix, and others. React Native is a framework based on React, which helps in building cross-platform mobile apps.
+
+According to the annual survey on Stack Overflow, a major resource for programmers, React is ranked second in a list of the most popular frameworks among web developers. It goes far ahead of its direct competitors, VUE.js and Angular.js.
+
+What Is React.js?
+React.js is a JS library for building web applications that change their state without reloading the pages. It is a perfect solution for constructing complex user interfaces with a large amount of dynamic content, which transforms as users interact with page elements.
+
+In 2011, Facebook engineer Jordan Valke created FaxJs, a prototype of React. The library’s source code was made public in 2013. Since then, React has evolved from a promising tool for optimizing web applications to an indispensable development component.
+
+One of its main features is that a React-powered app can render on both server and client sides whenever required. When React developers came up with a mechanism to simplify server-side rendering, the library grew in popularity. This approach helps to craft high-performance applications with good optimization.
+
+
+Source
+React.js Benefits
+The key among React.js benefits is that it makes development more efficient by allowing a programmer to control the rendering cycle of application components. The React framework is ideal for creating a dynamic interface that responds quickly to user actions.
+
+The first important feature of React is an actively used declarative approach. A developer can describe the behavior of elements against certain actions performed by a user and, thus, control the flow, as opposed to the imperative approach.
+
+The second principle is the employment of components. An interface consists of “building blocks” that can be transformed as you like. A programmer describes components using JSX syntax, which is similar to HTML but is considered more readable than JavaScript.
+
+The third key element is the virtual DOM, which means that in the course of work, the interaction is carried out with a lighter copy of the DOM. When it becomes necessary to update the DOM tree, it is compared to the virtual copy, and only the alternated elements are rendered. For users, this translates into faster rendering and decreased consumption of device resources.
+
+
+Source
+React is used by many large companies to build powerful web applications that can be constantly improved and maintained over a long time.
+
+Key benefits of React from a client perspective:
+
+High performance. Elements change their state instantly since the system updates specific objects rather than the entire page.
+Reuse of components. Developers can take any necessary elements from third-party libraries of ready-made components and assemble an interface block by block. This covers material design elements from Material-UI, components of the Bootstrap framework from React-Bootstrap, and many others. This is beneficial for customers, as the programmers spend less time building UI.
+Retaining classic applications’ benefits. Most modern frameworks provide server-side rendering. React can mimic the behavior available in classic apps by default, which is surely good.
+Working with a large number of components. If necessary, a React-based web application can be optimized to handle large amounts of data, although it will require a good deal of time.
+A large number of automation tools. Developers have ESLint for finding bugs in JS code, a set of tools provided by React Testing Library for testing, etc.
+The primary plus of using React from a business point of view is its high popularity. It is not a problem to find a developer, and it is also possible to replace the contractor if necessary. A new programmer will see into the essence of the product, analyze the colleague’s approach and get into gear.
+
+Traps and Pitfalls
+If a client needs a site with a large number of pages and plans to promote it in search engines, choosing React as the core will inevitably lead to the necessity for server rendering. And this complicates the development and affects the final cost of the project.
+
+At the same time, React has well-designed documentation. It is supported by an active developer community, which is one of the largest in the world. Community members are always ready to lend a helping hand, and solutions for the most common tasks are described on popular resources.
+
+Another disadvantage is associated with a small number of non-standard components. If you need something complicated, you have to create it yourself. And the development time will increase significantly if there are plenty of such components included in the interface.
+
+React component libraries are both loss and gain. Developers need to integrate each “building block” into a “finished building”; that is, it is not about just adding a few new “bricks” but about making them a part of a large ecosystem. Sometimes it takes a long time to achieve.
+
+The key drawback is that React is just a set of different components. Developers can choose their own technology stack, and each of the tools will come with both advantages and drawbacks.
+
+What Is React Native?
+React Native is a framework for cross-platform mobile app development, which is based on React.js. It is a product crafted by Facebook programmers and made available to the community in 2015.
+
+Programmers who know JavaScript and React’s syntax can easily master the framework and build smartphone apps for both Android and iOS without the need to split the task across multiple development teams.
+
+It is worth noting within this React Native review that an application consists of two main elements — JS core and a native part, which run in parallel.
+
+
+Source
+React Native Benefits
+The main advantage of React Native is its core in the form of React, although the interface is displayed as if it is created with the help of native tools for Android and iOS. Users will not notice the difference between applications based on Swift and React Native.
+
+Many IT giants use RN to combine code with native solutions. A part of the code can be written in Java for Android or Swift for iOS and integrated into React Native code.
+
+The global difference between React and React Native is that the former creates the DOM in a browser, while RN integrates into the architecture of Android and iOS-based mobile applications.
+
+The key benefits from a business perspective:
+
+Huge popularity. React Native became publicly available only six years ago, but many components simplifying development have appeared since then.
+Simultaneous development. The client receives an application for two leading mobile operating systems in one go. There is no need to pay for two separate teams.
+Sufficient productivity level. Applications based on React Native are on a par with their native counterparts when it comes to products with basic functionality.
+Modular architecture. It allows splitting an application into interchangeable modules, which makes the process of creating a product universal.
+
+Source
+The instant analysis of changes, reduced time of app update, and other benefits make React Native one of the best tools for building products for Android and iOS.
+
+Traps and Pitfalls
+RN is suitable for applications with complex logic that require integration with the device hardware, but only if developers who use native technologies are involved. If you need to import contacts or use Bluetooth, you can use native library for that from RN community, however when customization is needed, it will be rather hard to implement without knowing native part. However, there is no better alternative than RN when you need fast interfaces based on ready-made APIs.
+
+In addition to the above, React Native has several other drawbacks, namely, large applications. If you create products based on native libraries for Android and iOS, the installation file will be less resource-intensive. This is because RN adds its own assets to the app bundle.
+
+The main risk for businesses is the lack of guaranteed stability. Google and Apple provide long-term support for applications built on native libraries. However, if Facebook stops investing in React Native, an RN-powered product may stop working.
+
+Comparing React Native vs. React.js makes sense only if a client doesn’t understand which option is the right choice for a particular project. These are related tools that solve the same problem in different ways. The JS framework is designed for creating web applications, and RN is aimed at development for mobile devices.
+
+
+Source
+Cross-platform mobile frameworks used by developers around the world in 2019–2020, according to Statista
+
+React.js brings technology together, and React Native can be part of applications with native code. Yet, the RN integration into a native application is relevant mainly for large businesses or specific projects. In this scenario, complex calculations will be performed using system functions, while UI rendering — using React.
