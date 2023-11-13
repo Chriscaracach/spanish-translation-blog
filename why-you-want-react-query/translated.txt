@@ -1,0 +1,336 @@
+Por qué necesitás React Query
+07.11.2023 - Dominik Dorfmeister (TkDodo)
+
+No es ningún secreto que me encanta React Query por cómo simplifica la forma en que interactuamos con el estado asíncrono en nuestras aplicaciones React. Y sé que muchos colegas desarrolladores sienten lo mismo.
+
+A veces, sin embargo, me encuentro con publicaciones que afirman que no necesitas utilizarlo para hacer algo tan "simple" como obtener datos de un servidor.
+
+[quote]No necesitamos todas las funciones adicionales que React Query ofrece, así que no queremos agregar una biblioteca de terceros cuando podemos simplemente realizar una búsqueda de datos en un useEffect de manera igualmente sencilla.
+
+Hasta cierto punto, creo que es un punto válido: React Query te proporciona muchas funciones como almacenamiento en caché, reintentos, sondeos, sincronización de datos, precarga, ... y alrededor de un millón más que irían mucho más allá del alcance de este artículo. Está bien si no los necesitas, pero aún así creo que esto no debería impedirte usar React Query.
+
+Frameworks
+Si estás utilizando un marco de trabajo que tiene una solución incorporada para la obtención y mutación de datos, es posible que no necesites React Query.
+
+Entonces, en lugar de eso, analicemos el ejemplo estándar de realizar una búsqueda en un useEffect que surgió recientemente en Twitter y profundicemos en por qué podría ser una buena idea utilizar React Query también en esas situaciones:
+
+fetch-in-useEffect
+Copyfetch-in-useEffect: copy code to clipboard
+function Bookmarks({ category }) {
+  const [data, setData] = useState([])
+  const [error, setError] = useState()
+
+  useEffect(() => {
+    fetch(`${endpoint}/${category}`)
+      .then(res => res.json())
+      .then(d => setData(d))
+      .catch(e => setError(e))
+  }, [category])
+
+  // Return JSX based on data and error state
+}
+
+Si crees que este código es adecuado para casos de uso simples donde no necesitas funciones adicionales, permíteme decirte que identifiqué de inmediato 🐛 5 errores 🪲 escondidos en estas 10 líneas de código.
+
+Quizás tómate uno o dos minutos y ve si puedes encontrarlos todos. Esperaré...
+
+Pista: No es el conjunto de dependencias. Eso está bien.
+
+1. Condición de Carrera 🏎
+Hay razones por las cuales la documentación oficial de React recomienda usar un framework o una biblioteca como React Query para la obtención de datos. Mientras que realizar la solicitud de búsqueda puede ser un ejercicio bastante trivial, hacer que ese estado esté disponible de manera predecible en tu aplicación ciertamente no lo es.
+
+El efecto está configurado de manera que se vuelve a buscar cada vez que cambia la categoría, lo cual es ciertamente correcto. Sin embargo, las respuestas de la red pueden llegar en un orden diferente al que las enviaste. Así que si cambias la categoría de libros a películas y la respuesta de películas llega antes que la respuesta de libros, terminarás con datos incorrectos en tu componente.
+
+[img](Línea de tiempo que comienza a obtener libros, luego obtiene películas. Las películas se resuelven más rápido, por lo que establecemos los datos de películas (setData(movies)) antes de establecer los datos de libros (setData(books)).)
+
+Al final, te quedará un estado inconsistente: tu estado local indicará que has seleccionado películas, pero los datos que estás representando son en realidad de libros.
+
+La documentación de React dice que podemos solucionar esto con una función de limpieza y un booleano de ignorar, así que hagámoslo:
+
+ignore-flag
+Copyignore-flag: copy code to clipboard
+function Bookmarks({ category }) {
+  const [data, setData] = useState([])
+  const [error, setError] = useState()
+
+  useEffect(() => {
+    let ignore = false
+    fetch(`${endpoint}/${category}`)
+      .then(res => res.json())
+      .then(d => {
+        if (!ignore) {
+          setData(d)
+        }
+      .catch(e => {
+        if (!ignore) {
+          setError(e)
+        }
+      })
+      return () => {
+        ignore = true
+      }
+  }, [category])
+
+  // Return JSX based on data and error state
+}
+
+Lo que sucede ahora es que la función de limpieza del efecto se ejecuta cuando cambia la categoría, estableciendo la bandera local de "ignorar" en true. Si después de eso llega una respuesta de búsqueda, ya no llamará a setState. Muy fácil.
+
+2. Estado de carga 🕐
+No está presente en absoluto. No tenemos forma de mostrar una interfaz de usuario pendiente mientras se realizan las solicitudes, ni para la primera ni para las solicitudes posteriores. Entonces, ¿agreguemos eso?
+
+loading-state
+Copyloading-state: copy code to clipboard
+function Bookmarks({ category }) {
+  const [isLoading, setIsLoading] = useState(true)
+  const [data, setData] = useState([])
+  const [error, setError] = useState()
+
+  useEffect(() => {
+    let ignore = false
+    setIsLoading(true)
+    fetch(`${endpoint}/${category}`)
+      .then(res => res.json())
+      .then(d => {
+        if (!ignore) {
+          setData(d)
+        }
+      .catch(e => {
+        if (!ignore) {
+          setError(e)
+        }
+      })
+      .finally(() => {
+        if (!ignore) {
+          setIsLoading(false)
+        }
+      })
+      return () => {
+        ignore = true
+      }
+  }, [category])
+
+  // Return JSX based on data and error state
+}
+
+3. Estado vacío 🗑️
+Inicializar los datos con un array vacío parece una buena idea para evitar tener que verificar indefiniciones(undefined) todo el tiempo, pero ¿qué pasa si recuperamos datos para una categoría que aún no tiene entradas, y de hecho recibimos un array vacío? No tendríamos forma de distinguir entre "sin datos aún" y "ningún dato en absoluto". El estado de carga que acabamos de introducir ayuda, pero aún es mejor inicializar con indefinido(undefined):
+
+empty-state
+Copyempty-state: copy code to clipboard
+function Bookmarks({ category }) {
+  const [isLoading, setIsLoading] = useState(true)
+  const [data, setData] = useState()
+  const [error, setError] = useState()
+
+  useEffect(() => {
+    let ignore = false
+    setIsLoading(true)
+    fetch(`${endpoint}/${category}`)
+      .then(res => res.json())
+      .then(d => {
+        if (!ignore) {
+          setData(d)
+        }
+      .catch(e => {
+        if (!ignore) {
+          setError(e)
+        }
+      })
+      .finally(() => {
+        if (!ignore) {
+          setIsLoading(false)
+        }
+      })
+      return () => {
+        ignore = true
+      }
+  }, [category])
+
+  // Return JSX based on data and error state
+}
+
+4. Los datos y el error no se reinician cuando cambia la categoría 🔄
+Tanto los datos como el error son variables de estado separadas, y no se reinician cuando cambia la categoría. Esto significa que si una categoría falla y cambiamos a otra que se recupera con éxito, nuestro estado será:
+
+```javascript
+data: datosDeLaCategoriaActual
+error: errorDeLaCategoriaAnterior
+```
+El resultado dependerá de cómo rendericemos JSX en función de este estado. Si verificamos primero el error, renderizaremos la interfaz de usuario de error con el mensaje antiguo, aunque tengamos datos válidos:
+
+error-first
+Copyerror-first: copy code to clipboard
+return (
+  <div>
+    { error ? (
+      <div>Error: {error.message}</div>
+    ) : (
+      <ul>
+        {data.map(item => (
+          <li key={item.id}>{item.name}</div>
+        ))}
+      </ul>
+    )}
+  </div>
+)
+
+Si verificamos primero los datos, tenemos el mismo problema si la segunda solicitud falla. Si siempre renderizamos tanto el error como los datos, también estamos mostrando información potencialmente desactualizada. 😔
+
+Para solucionar esto, debemos restablecer nuestro estado local cuando cambia la categoría:
+
+reset-state
+Copyreset-state: copy code to clipboard
+function Bookmarks({ category }) {
+  const [isLoading, setIsLoading] = useState(true)
+  const [data, setData] = useState()
+  const [error, setError] = useState()
+
+  useEffect(() => {
+    let ignore = false
+    setIsLoading(true)
+    fetch(`${endpoint}/${category}`)
+      .then(res => res.json())
+      .then(d => {
+        if (!ignore) {
+          setData(d)
+          setError(undefined)
+        }
+      .catch(e => {
+        if (!ignore) {
+          setError(e)
+          setData(undefined)
+        }
+      })
+      .finally(() => {
+        if (!ignore) {
+          setIsLoading(false)
+        }
+      })
+      return () => {
+        ignore = true
+      }
+  }, [category])
+
+  // Return JSX based on data and error state
+}
+
+5. Se ejecutará dos veces en StrictMode 🔥🔥
+Bueno, esto es más una molestia que un error, pero definitivamente es algo que sorprende a los nuevos desarrolladores de React. Si tu aplicación está envuelta en <React.StrictMode>, React llamará intencionalmente tu efecto dos veces en el modo de desarrollo para ayudarte a encontrar errores como funciones de limpieza faltantes.
+
+Si quisiéramos evitar eso, tendríamos que agregar otra "solución de contorno con ref", lo cual no creo que valga la pena.
+
+
+Bonus: Manejo de errores 🚨
+No incluí esto en la lista original de errores porque tendrías el mismo problema con React Query: fetch no rechaza los errores HTTP, así que tendrías que verificar res.ok y lanzar un error tú mismo.
+
+error-handling
+Copyerror-handling: copy code to clipboard
+function Bookmarks({ category }) {
+  const [isLoading, setIsLoading] = useState(true)
+  const [data, setData] = useState()
+  const [error, setError] = useState()
+
+  useEffect(() => {
+    let ignore = false
+    setIsLoading(true)
+    fetch(`${endpoint}/${category}`)
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('Failed to fetch')
+        }
+        return res.json()
+      })
+      .then(d => {
+        if (!ignore) {
+          setData(d)
+          setError(undefined)
+        }
+      .catch(e => {
+        if (!ignore) {
+          setError(e)
+          setData(undefined)
+        }
+      })
+      .finally(() => {
+        if (!ignore) {
+          setIsLoading(false)
+        }
+      })
+      return () => {
+        ignore = true
+      }
+  }, [category])
+
+  // Return JSX based on data and error state
+}
+
+[quote]Por qué Fetch no rechaza las respuestas de error
+Si deseas obtener más información sobre por qué fetch se comporta de esa manera, echa un vistazo a este excelente artículo de Artem Zakharchenko.
+
+Nuestro pequeño useEffect hook de "solo queremos obtener datos, ¿qué tan difícil puede ser?" se convirtió en un gran desorden de código espagueti 🍝 tan pronto como tuvimos que considerar casos especiales y la gestión del estado. Entonces, ¿cuál es la lección aquí?
+
+La obtención de datos es simple.
+La gestión asíncrona del estado no lo es.
+Y aquí es donde entra React Query, porque React Query NO es una biblioteca de obtención de datos, es un gestor de estado asíncrono. Entonces, cuando dices que no lo necesitas para hacer algo tan simple como obtener datos de un punto final, en realidad tienes razón: incluso con React Query, necesitas escribir el mismo código de obtención que antes.
+
+Pero aún lo necesitas para hacer que ese estado esté disponible de manera predecible en tu aplicación de la manera más fácil posible. Porque seamos honestos, no escribí ese código de booleano de ignorar antes de usar React Query, y probablemente tú tampoco lo hiciste. 😉
+
+Con React Query, el código anterior se convierte en:
+
+react-query
+Copyreact-query: copy code to clipboard
+function Bookmarks({ category }) {
+  const { isLoading, data, error } = useQuery({
+    queryKey: ['bookmarks', category],
+    queryFn: () =>
+      fetch(`${endpoint}/${category}`).then((res) => {
+        if (!res.ok) {
+          throw new Error('Failed to fetch')
+        }
+        return res.json()
+      }),
+  })
+
+  // Return JSX based on data and error state
+}
+
+Esto abarca aproximadamente el 50% del código espagueti mencionado anteriormente, y más o menos la misma cantidad que el fragmento original y con errores. Y sí, esto aborda automáticamente todos los errores que encontramos:
+
+🐛 Errores
+🏎️ No hay condición de carrera porque el estado siempre se almacena según su entrada (categoría).
+🕐 Obtienes estados de carga, datos y error de forma gratuita, incluyendo uniones discriminadas a nivel de tipo.
+🗑️ Los estados vacíos están claramente separados y se pueden mejorar aún más con funciones como placeholderData.
+🔄 No obtendrás datos ni errores de una categoría anterior a menos que optes por ello.
+🔥 Las múltiples solicitudes se deduplican de manera eficiente, incluidas aquellas provocadas por StrictMode.
+
+Entonces, si aún piensas que no quieres usar React Query, me gustaría desafiarte a probarlo en tu próximo proyecto. Apuesto a que no solo terminarás con un código más resistente a casos especiales, sino también más fácil de mantener y ampliar. Y una vez que pruebes todas las funciones que ofrece, es probable que nunca mires hacia atrás.
+
+[quote]Query.gg 🔮
+He estado trabajando en un nuevo curso oficial sobre React Query junto con ui.dev. Este curso te brindará una comprensión de los principios fundamentales tanto de cómo funciona React Query bajo el capó como de cómo escribir código de React Query que escala. Si te gusta el contenido que he estado creando hasta ahora, te encantará query.gg.
+
+[img](Query.gg - El curso oficial de React Query)
+
+Bonus: Cancelación
+Muchas personas en Twitter mencionaron la falta de cancelación de solicitudes en el fragmento original. No creo que eso sea necesariamente un error, solo una característica faltante. Por supuesto, React Query también tiene esto cubierto con un cambio bastante sencillo:
+
+cancellation
+Copycancellation: copy code to clipboard
+function Bookmarks({ category }) {
+  const { isLoading, data, error } = useQuery({
+    queryKey: ['bookmarks', category],
+    queryFn: ({ signal }) =>
+      fetch(`${endpoint}/${category}`, { signal }).then((res) => {
+        if (!res.ok) {
+          throw new Error('Failed to fetch')
+        }
+        return res.json()
+      }),
+  })
+
+  // Return JSX based on data and error state
+}
+
+Simplemente toma la señal que recibes en queryFn, pásala a fetch y las solicitudes se abortarán automáticamente cuando cambie la categoría. 🎉
+
+Eso es todo por hoy. No dudes en contactarme en Twitter si tienes alguna pregunta, o simplemente deja un comentario abajo. ⬇️
